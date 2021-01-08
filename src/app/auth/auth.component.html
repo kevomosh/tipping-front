@@ -1,0 +1,45 @@
+<div  fxLayoutAlign="center center">
+  <mat-card fxFlex="40" fxFlex.lt-md="90"  fxLayout="column">
+    <mat-toolbar>Login Page</mat-toolbar>
+    <form  fxLayoutAlign="stretch" fxLayout="column"
+           [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="form">
+      <mat-form-field >
+        <mat-label>Email</mat-label>
+        <input matInput placeholder="email" formControlName="email">
+        <mat-error>Enter valid email</mat-error>
+      </mat-form-field>
+
+      <mat-form-field >
+        <mat-label>Password</mat-label>
+        <input matInput type="password" placeholder="Password" formControlName="password">
+        <mat-error>Password is <strong>required</strong></mat-error>
+      </mat-form-field>
+      <button mat-raised-button color="primary"
+              type="submit" class="btn" [disabled]="loginForm.invalid">Login</button>
+    </form>
+  </mat-card>
+</div>
+
+
+<!--<div fxLayoutAlign="center center" fxFlexFill class="main-div">-->
+<!--  <mat-card fxFlex="70">-->
+<!--    <mat-toolbar>Login Page</mat-toolbar>-->
+<!--    <form  fxLayoutAlign="stretch" fxLayout="column"-->
+<!--           [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="form">-->
+<!--      <mat-form-field >-->
+<!--        <mat-label>Email</mat-label>-->
+<!--        <input matInput placeholder="email" formControlName="email">-->
+<!--        <mat-error>Enter valid email</mat-error>-->
+<!--      </mat-form-field>-->
+
+<!--      <mat-form-field >-->
+<!--        <mat-label>Password</mat-label>-->
+<!--        <input matInput type="password" placeholder="Password" formControlName="password">-->
+<!--        <mat-error>Password is <strong>required</strong></mat-error>-->
+<!--      </mat-form-field>-->
+<!--      <button mat-raised-button color="primary"-->
+<!--              type="submit" class="btn" [disabled]="loginForm.invalid">Login</button>-->
+<!--    </form>-->
+
+<!--  </mat-card>-->
+<!--</div>-->

@@ -27,10 +27,8 @@ export class UserService {
     return  params.name ? `${c}&name=${params.name}` : c;
   }
 
-
-
   private static createParamsUrlWithSort(initial: string, params: ParamsDTO): string {
-    let d = UserService.createParamsUrl(params, initial);
+    let d = this.createParamsUrl(params, initial);
 
     const sortParams = params.sort;
     if (sortParams && sortParams.length > 0) {
