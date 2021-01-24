@@ -1,0 +1,32 @@
+.answer {
+  border: solid 1px;
+  border-radius: 5px;
+  padding: 5px;
+  margin: 5px;
+}
+.slider {
+  margin-top: 10px;
+}
+.mat-button-toggle-checked {
+  color: #000;
+  background-color: #77ff33;
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: inline-flex;
+}
+::ng-deep {
+  .mat-slider-thumb-label {
+    transform: rotate(45deg) !important;
+    border-radius: 50% 50% 0 !important;
+  }
+  .mat-slider-thumb {
+    transform: scale(0) !important;
+  }
+  .mat-slider-thumb-label-text {
+    opacity: 1 !important;
+  }
+}

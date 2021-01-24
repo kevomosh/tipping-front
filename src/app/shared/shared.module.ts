@@ -14,19 +14,22 @@ import {MatDialogModule} from '@angular/material/dialog';
 import {MatSelectModule} from '@angular/material/select';
 import {MatIconModule} from '@angular/material/icon';
 import {MatCheckboxModule} from '@angular/material/checkbox';
+import {MatSliderModule} from '@angular/material/slider';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { ErrorComponent } from './components/error/error.component';
+import { PickFormComponent } from './components/pick-form/pick-form.component';
 
 const matModules = [MatRadioModule, MatCardModule,
   MatButtonModule, MatButtonToggleModule,
   MatFormFieldModule, MatInputModule,
   MatToolbarModule, MatSnackBarModule,
   MatDialogModule, MatSelectModule,
-  MatIconModule, MatCheckboxModule];
+  MatIconModule, MatCheckboxModule,
+  MatSliderModule];
 
 @NgModule({
-  declarations: [ErrorComponent],
+  declarations: [ErrorComponent, PickFormComponent],
   imports: [
     CommonModule,
     matModules,
@@ -42,7 +45,8 @@ const matModules = [MatRadioModule, MatCardModule,
     HttpClientModule,
     FlexLayoutModule,
     ErrorComponent,
-    NgSelectModule
+    NgSelectModule,
+    PickFormComponent
   ]
 })
 export class SharedModule { }

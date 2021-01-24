@@ -11,11 +11,12 @@ import {SharedModule} from '../shared/shared.module';
 import {FormsModule} from '@angular/forms';
 import { FilterComponent } from './components/filter/filter.component';
 import { PickComponent } from './components/pick/pick.component';
+import { MakePicComponent } from './components/make-pic/make-pic.component';
 
 const matModules = [MatTableModule, MatProgressBarModule,
 MatSortModule, MatPaginatorModule];
 @NgModule({
-  declarations: [UserComponent, FilterComponent, PickComponent],
+  declarations: [UserComponent, FilterComponent, PickComponent, MakePicComponent],
     imports: [
         CommonModule,
         UserRoutingModule,

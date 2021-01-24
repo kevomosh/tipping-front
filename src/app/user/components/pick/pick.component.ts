@@ -4,7 +4,6 @@ import {UserService} from '../../services/user.service';
 import {map, switchMap, tap} from 'rxjs/operators';
 import {ColumnMode} from '@swimlane/ngx-datatable';
 import {TeamSelectedDTO} from '../../../dto/teamSelectedDTO';
-import {GameDTO} from '../../../dto/gameDTO';
 import {ParamService} from '../../services/param.service';
 import {AuthService} from '../../../auth/service/auth.service';
 import {combineLatest} from 'rxjs';
@@ -43,7 +42,7 @@ export class PickComponent implements OnInit {
       const comp = param.get('comp');
       // tslint:disable-next-line:radix
       const weekNumber = parseInt(param.get('weekNumber')) ;
-      return   combineLatest([this.userService.getPicks(comp, weekNumber),
+      return  combineLatest([this.userService.getPicks(comp, weekNumber),
         this.loadingService.tableIsLoading]).pipe(
         map(([result, isLoading]) => ({
           result,

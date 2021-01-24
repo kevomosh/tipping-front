@@ -8,6 +8,7 @@ import {map, switchMap, tap} from 'rxjs/operators';
 import {ParamsDTO} from '../../dto/paramsDTO';
 import {PickResultDTO} from '../../dto/PickResultDTO';
 import {LoadingService} from '../../shared/services/loading.service';
+import {GamesForWeekDTO} from '../../dto/gamesForWeekDTO';
 
 @Injectable({
   providedIn: 'root'
@@ -39,8 +40,16 @@ export class UserService {
     return d;
   }
 
+  getGames(comp: string, weekNumber?: number): Observable<GamesForWeekDTO> {
+    let url = `${this.baseUrl}/user/${comp}/getLatestGames`;
+    if (weekNumber) {
+      url = `${this.baseUrl}/user/${comp}/getGamesForWeek/${weekNumber}`;
+    }
+    return this.http.get<GamesForWeekDTO>(url);
+  }
+
   getResults(comp: string): Observable<ResultDTO> {
-    const initial = `${this.baseUrl}/${comp}/user/getResultsForWeek?`;
+    const initial = `${this.baseUrl}/user/${comp}/getResultsForWeek?`;
     return this.paramService.getMainParams().pipe(
       tap(() => this.loadingService.setTableLoading(true)),
       map(params => UserService.createParamsUrlWithSort(initial, params)),
@@ -50,9 +59,9 @@ export class UserService {
   }
 
    getPicks(comp: string, weekNumber: number): Observable<PickResultDTO> {
-    let url = `${this.baseUrl}/${comp}/user/getPicks?`;
+    let url = `${this.baseUrl}/user/${comp}/getPicks?`;
     if (weekNumber) {
-      url = `${this.baseUrl}/${comp}/user/getPicks/${weekNumber}?`;
+      url = `${this.baseUrl}/user/${comp}/getPicks/${weekNumber}?`;
     }
     return this.paramService.getMainParams().pipe(
       tap(() => this.loadingService.setTableLoading(true)),

@@ -1,0 +1,48 @@
+<form [formGroup]="pickForm" (ngSubmit)="onSubmit()">
+  <div
+    formArrayName="teamsSelected"
+    *ngFor="let pick of controls; let i = index"
+  >
+    <div formGroupName="{{i}}" fxLayout="column" fxLayoutGap="5px">
+      <mat-button-toggle-group fxLayout="row" formControlName="team" name="fontStyle" aria-label="Font Style">
+        <mat-button-toggle fxFlex="50" [value]="pick.get('homeTeam').value">
+          {{pick.get("homeTeam").value}}
+        </mat-button-toggle>
+        <mat-button-toggle fxFlex="50" [value]="pick.get('awayTeam').value">
+          {{pick.get("awayTeam").value}}
+        </mat-button-toggle>
+      </mat-button-toggle-group>
+      <ng-container *ngIf="info.games[i].gameNumber === 1">
+        <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="40px">
+          <div fxFlex="70">
+            <ng-select
+              [items]="playerList"
+              bindLabel="both"
+              formControlName="firstScorer"
+            >
+            </ng-select>
+          </div>
+          <div>
+            <button mat-raised-button type="button" (click)="getRandomScorer(info.players, i)">Random</button>
+          </div>
+        </div>
+      </ng-container>
+      <ng-container *ngIf="info.games[i].gameNumber === 2">
+        <div fxLayout="row" fxLayoutAlign="space-between center" class="slider" fxLayoutGap="40px">
+          <mat-slider
+            fxFlex="70"
+            [max]="limit"
+            [min]="0"
+            [thumbLabel]="true"
+            [step]="1"
+            formControlName="margin"
+          ></mat-slider>
+          <div fxFlex="30">
+            <button mat-raised-button type="button" (click)="getRandomMargin(i)">Random</button>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+  <button mat-raised-button [disabled]="!isAdmin && pickForm.invalid">Submit</button>
+</form>

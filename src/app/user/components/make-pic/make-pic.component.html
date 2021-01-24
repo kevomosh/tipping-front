@@ -1,0 +1,14 @@
+<div  fxLayoutAlign="center center">
+<div  fxFlex="60" fxFlex.lt-md="90" fxLayout="column" fxLayoutGap="2px">
+  <div *ngIf="info$ | async as res">
+    <app-pick-form [info]="res"
+    [limit]="limit"
+    [isAdmin]="false"
+    (submitForm)="onSubmitForm($event)"></app-pick-form>
+  </div>
+  <div>
+  </div>
+</div>
+</div>
+
+
