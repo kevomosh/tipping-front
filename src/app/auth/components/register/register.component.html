@@ -1,58 +1,60 @@
 <div *ngIf="allGroups$ | async as allGroups">
-<div  fxLayoutAlign="center center" >
-  <mat-card fxFlex="40" fxFlex.lt-md="90" >
-    <mat-toolbar>Register</mat-toolbar>
-    <form  fxLayoutAlign="stretch" fxLayout="column"
-           [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="form">
-      <mat-form-field >
-        <mat-label>Name</mat-label>
-        <input matInput placeholder="name" formControlName="name">
-        <mat-error>Name required</mat-error>
-      </mat-form-field>
-      <mat-form-field >
-        <mat-label>Email</mat-label>
-        <input matInput placeholder="email" formControlName="email">
-        <mat-error>Enter valid email</mat-error>
-      </mat-form-field>
-      <mat-form-field >
-        <mat-label>Password</mat-label>
-        <input matInput type="password" placeholder="Password" formControlName="password">
-        <mat-error>Password is <strong>required</strong></mat-error>
-      </mat-form-field>
-      <mat-form-field >
-        <mat-label>Confirm Password</mat-label>
-        <input matInput type="password" placeholder="Confirm Password" formControlName="cpassword">
-        <mat-error>Password is <strong>required</strong></mat-error>
-      </mat-form-field>
-      <div>
-        <ng-select
-        [items]="allGroups.nrlGroups"
-        bindLabel="name"
-        placeholder="Select Nrl groups. Max of 3"
-        [multiple]="true"
-        maxSelectedItems="3"
-        (clear)="onClear()"
-        (add)="onAdd($event)"
-        (remove)="onRemove($event)"
-        ></ng-select>
-      </div>
-      <div>
-        <ng-select
-          [items]="allGroups.aflGroups"
-          bindLabel="name"
-          placeholder="Select Afl groups. Max of 3"
-          [multiple]="true"
-          maxSelectedItems="3"
-          (add)="onAdd($event)"
-          (remove)="onRemove($event)"
-        ></ng-select>
-      </div>
+  <div fxLayoutAlign="center center">
+    <mat-card fxFlex="40" fxFlex.lt-md="90">
+      <mat-toolbar>Register</mat-toolbar>
+      <form fxLayoutAlign="stretch" fxLayout="column"
+            [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="form">
+        <mat-form-field>
+          <mat-label>Name</mat-label>
+          <input matInput placeholder="name" formControlName="name">
+          <mat-error>Name required</mat-error>
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>Email</mat-label>
+          <input matInput placeholder="email" formControlName="email">
+          <mat-error>Enter valid email</mat-error>
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>Password</mat-label>
+          <input matInput type="password" placeholder="Password" formControlName="password">
+          <mat-error>Password is <strong>required</strong></mat-error>
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>Confirm Password</mat-label>
+          <input matInput type="password" placeholder="Confirm Password" formControlName="cpassword">
+          <mat-error>Password is <strong>required</strong></mat-error>
+        </mat-form-field>
+        <div>
+          <ng-select
+            [items]="allGroups.nrlGroups"
+            bindLabel="name"
+            placeholder="Select Nrl groups. Max of 3"
+            [multiple]="true"
+            maxSelectedItems="3"
+            (clear)="onClear()"
+            (add)="onAdd($event)"
+            (remove)="onRemove($event)"
+          ></ng-select>
+        </div>
+        <div>
+          <ng-select
+            [items]="allGroups.aflGroups"
+            bindLabel="name"
+            placeholder="Select Afl groups. Max of 3"
+            [multiple]="true"
+            maxSelectedItems="3"
+            (add)="onAdd($event)"
+            (remove)="onRemove($event)"
+          ></ng-select>
+        </div>
 
-      <button mat-raised-button color="primary"
-              type="submit" style="margin-top:20px" [disabled]="registerForm.invalid ||  selectedGroups.length === 0" >Register</button>
+        <button mat-raised-button color="primary"
+                type="submit" style="margin-top:20px" [disabled]="registerForm.invalid ||  selectedGroups.length === 0">
+          Register
+        </button>
 
-    </form>
+      </form>
 
-  </mat-card>
-</div>
+    </mat-card>
+  </div>
 </div>

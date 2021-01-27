@@ -7,7 +7,7 @@ import {Subject} from 'rxjs';
 import {LoginView} from '../views/loginView';
 import {takeUntil} from 'rxjs/operators';
 import {NotifierService} from '../shared/services/notifier.service';
-import {ErrorDTO} from '../dto/errorDTO';
+import {AlertDTO} from '../dto/AlertDTO';
 
 @Component({
   selector: 'app-auth',
@@ -32,7 +32,7 @@ export class AuthComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     // TODO Change end of return url to correct one
-    this.returnUrl = this.activatedRoute.snapshot.queryParams.returnUrl || '/register';
+    this.returnUrl = this.activatedRoute.snapshot.queryParams.returnUrl || '/user/results/nrl';
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: [
@@ -56,10 +56,10 @@ export class AuthComponent implements OnInit, OnDestroy {
     ).subscribe(x => {
       this.router.navigateByUrl(this.returnUrl);
     }, error => {
-      const errotDTO: ErrorDTO = error.error;
-      errotDTO.btnUrl = 'Please try Again';
-
-      this.notifierService.showNotification(errotDTO, 'error', 5000);
+      const e = error.error;
+      const alert = new AlertDTO(e.status, e.error, e.message,
+        5000, 'error', ['Please try again'], ['/auth']);
+      this.notifierService.showNotification(alert);
       this.loginForm.reset();
     });
   }

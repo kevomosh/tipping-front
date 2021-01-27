@@ -1,8 +1,9 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import {ParamService} from '../../services/param.service';
 import {FormControl, Validators} from '@angular/forms';
 import {debounceTime, distinctUntilChanged, tap} from 'rxjs/operators';
 import {GroupDTO} from '../../../dto/groupDTO';
+import {NgSelectComponent} from '@ng-select/ng-select';
 
 @Component({
   selector: 'app-filter',
@@ -15,6 +16,8 @@ export class FilterComponent implements OnInit {
   @Input() groups: GroupDTO[];
    groupIds: number[] = [];
 
+   @ViewChild('select') select: NgSelectComponent;
+
   nameFormControl = new FormControl('', [Validators.minLength(2)]);
 
   nameFilter$ = this.nameFormControl.valueChanges.pipe(
@@ -24,6 +27,8 @@ export class FilterComponent implements OnInit {
   );
 
   ngOnInit(): void {
+    this.paramService.setGroupIdFilter([]);
+
   }
   onAdd($event: any): void {
     this.groupIds.push($event.id);
@@ -38,6 +43,12 @@ export class FilterComponent implements OnInit {
   onClear(): void {
     this.groupIds = [];
     this.paramService.setGroupIdFilter(this.groupIds);
+  }
+
+  clearSelect(): void {
+    this.select.handleClearClick();
+    this.onClear();
+    // this.onClear();
   }
 
 }

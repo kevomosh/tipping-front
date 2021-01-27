@@ -35,19 +35,24 @@ export class PickFormComponent implements OnInit {
   }));
   }
 
-  onSubmit(): void {
+  onSubmit(): void{
     const val = this.pickForm.value.teamsSelected;
-    const margin = val[1].margin;
-    const firstScorer = val[0].firstScorer.name;
     const info: MakePickView = {
       weekNumber: this.info.weekNumber,
-      margin,
-      firstScorer,
       selectedViewList: val.map(elem => ({
         gameNumber: elem.gameNumber,
         team: elem.team
       }))
     };
+
+    if (this.info.games.some(g => g.gameNumber === 1)) {
+      info.firstScorer = val.find(g => g.gameNumber === 1).firstScorer.name;
+    }
+
+    if (this.info.games.some(g => g.gameNumber === 2)) {
+      info.margin = val.find(g => g.gameNumber === 2).margin;
+    }
+
     this.submitForm.emit(info);
   }
 

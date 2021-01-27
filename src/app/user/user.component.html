@@ -1,34 +1,88 @@
 <div fxLayout="column" fxLayoutGap="10px"  >
-  <ng-container *ngIf="groups$ | async as groups">
-    <app-filter
-      [groups]="groups"
-    ></app-filter>
-  </ng-container>
+    <div *ngIf="stream$ | async as comb; else loading">
+      <app-filter
+        [groups]="comb.groups"
+      ></app-filter>
 
-<div  fxLayout="row" fxLayoutAlign="center center"  *ngIf="result$ | async as res" >
-    <div fxFlex="50" fxFlex.lt-md="90">
-      <ngx-datatable
-        class="material striped"
-        [rows]="res.res.results"
-        [columnMode]="ColumnMode.force"
-        [headerHeight]="50"
-        [footerHeight]="50"
-        [rowHeight]="50"
-        [externalPaging]="true"
-        [externalSorting]="true"
-        [count]="res.res.total"
-        [offset]="res.res.pageNumber"
-        [limit]="5"
-        [loadingIndicator]="res.loading"
-        (page)="setPage($event)"
-        (sort)="onSort($event)"
-      >
-        <ngx-datatable-column [sortable]="false" name="Name"></ngx-datatable-column>
-        <ngx-datatable-column matSort name="LastWeekScore"></ngx-datatable-column>
-        <ngx-datatable-column matSort name="TotalScore"> </ngx-datatable-column>
-      </ngx-datatable>
+    <div  fxLayout="row" fxLayoutAlign="center center"  >
+      <div fxFlex="50" fxFlex.lt-md="90">
+        <ngx-datatable
+          class="material striped"
+          [rows]="comb.res.results"
+          [columnMode]="ColumnMode.force"
+          [headerHeight]="50"
+          [footerHeight]="50"
+          [rowHeight]="50"
+          [externalPaging]="true"
+          [externalSorting]="true"
+          [count]="comb.res.total"
+          [offset]="comb.res.pageNumber"
+          [limit]="5"
+          [loadingIndicator]="comb.loading"
+          (page)="setPage($event)"
+          (sort)="onSort($event)"
+        >
+          <ngx-datatable-column [sortable]="false" name="Name"></ngx-datatable-column>
+          <ngx-datatable-column matSort name="LastWeekScore"></ngx-datatable-column>
+          <ngx-datatable-column matSort name="TotalScore"> </ngx-datatable-column>
+        </ngx-datatable>
+      </div>
     </div>
   </div>
-
 </div>
+
+<ng-template #loading>
+  <div fxLayout="row" fxLayoutAlign="center center" style="height: 100%; margin-top: 20px">
+  <mat-progress-spinner
+  [color]="'accent'"
+  [mode]="'indeterminate'"
+  ></mat-progress-spinner>
+  </div>
+</ng-template>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!--<div fxLayout="column" fxLayoutGap="10px"  >-->
+<!--  <ng-container *ngIf="groups$ | async as groups">-->
+<!--    <app-filter-->
+<!--      [groups]="groups"-->
+<!--    ></app-filter>-->
+<!--  </ng-container>-->
+
+<!--<div  fxLayout="row" fxLayoutAlign="center center"  *ngIf="result$ | async as res" >-->
+<!--    <div fxFlex="50" fxFlex.lt-md="90">-->
+<!--      <ngx-datatable-->
+<!--        class="material striped"-->
+<!--        [rows]="res.res.results"-->
+<!--        [columnMode]="ColumnMode.force"-->
+<!--        [headerHeight]="50"-->
+<!--        [footerHeight]="50"-->
+<!--        [rowHeight]="50"-->
+<!--        [externalPaging]="true"-->
+<!--        [externalSorting]="true"-->
+<!--        [count]="res.res.total"-->
+<!--        [offset]="res.res.pageNumber"-->
+<!--        [limit]="5"-->
+<!--        [loadingIndicator]="res.loading"-->
+<!--        (page)="setPage($event)"-->
+<!--        (sort)="onSort($event)"-->
+<!--      >-->
+<!--        <ngx-datatable-column [sortable]="false" name="Name"></ngx-datatable-column>-->
+<!--        <ngx-datatable-column matSort name="LastWeekScore"></ngx-datatable-column>-->
+<!--        <ngx-datatable-column matSort name="TotalScore"> </ngx-datatable-column>-->
+<!--      </ngx-datatable>-->
+<!--    </div>-->
+<!--  </div>-->
+<!--</div>-->
 

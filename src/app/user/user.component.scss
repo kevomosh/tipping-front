@@ -16,6 +16,12 @@ input[type="checkbox"] {
   display: none;
 }
 
+.spinner {
+  display: flex;
+  align-content: center;
+  align-items: center;
+  height: 600px;
+}
 
 .inner :active {
   background-color: #d65cad;

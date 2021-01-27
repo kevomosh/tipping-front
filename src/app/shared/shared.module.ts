@@ -15,6 +15,10 @@ import {MatSelectModule} from '@angular/material/select';
 import {MatIconModule} from '@angular/material/icon';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import {MatSliderModule} from '@angular/material/slider';
+import {MatSidenavModule} from '@angular/material/sidenav';
+import {MatListModule} from '@angular/material/list';
+import {MatMenuModule} from '@angular/material/menu';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { ErrorComponent } from './components/error/error.component';
@@ -26,7 +30,9 @@ const matModules = [MatRadioModule, MatCardModule,
   MatToolbarModule, MatSnackBarModule,
   MatDialogModule, MatSelectModule,
   MatIconModule, MatCheckboxModule,
-  MatSliderModule];
+  MatSliderModule, MatSidenavModule,
+  MatListModule, MatMenuModule,
+  MatProgressSpinnerModule];
 
 @NgModule({
   declarations: [ErrorComponent, PickFormComponent],

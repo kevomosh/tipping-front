@@ -1,12 +1,32 @@
-<div fxLayout="column" fxLayoutGap="10px"  >
 
-  <ng-container *ngIf="groups$ | async as groups">
+<div fxLayout="column" fxLayoutGap="10px" *ngIf="combined$ | async as res; else loading">
+  <ng-container *ngIf="beforeDeadline">
+    <app-timer
+      [deadline]="res.result.deadLine"
+    ></app-timer>
+  </ng-container>
+
+  <ng-container *ngIf="res.result.total > 1">
     <app-filter
-      [groups]="groups"
+      [groups]="res.groups"
     ></app-filter>
   </ng-container>
 
-<div fxLayout="row" fxLayoutAlign="center center" *ngIf="result$ | async as res">
+  <div fxLayout="row" fxLayoutAlign="center center">
+      <button
+        (click)="navigateToWeek(res.result.weekNumber - 1)"
+        mat-raised-button type="button"
+        *ngIf="!previousNotZero(res.result.weekNumber)"
+        class="first">Previous</button>
+      <button
+        (click)="navigateToWeek(res.result.weekNumber + 1)"
+        mat-raised-button type="button"
+        *ngIf="res.result.fwp" class="second">Next</button>
+    </div>
+
+
+
+<div fxLayout="row" fxLayoutAlign="center center">
   <div fxFlex="70" fxFlex.lt-md="100">
   <ngx-datatable
     class="material striped"
@@ -50,3 +70,12 @@
   </div>
 </div>
 </div>
+
+<ng-template #loading>
+  <div fxLayout="row" fxLayoutAlign="center center" style="height: 100%; margin-top: 20px">
+    <mat-progress-spinner
+      [color]="'accent'"
+      [mode]="'indeterminate'"
+    ></mat-progress-spinner>
+  </div>
+</ng-template>

@@ -12,11 +12,13 @@ import {FormsModule} from '@angular/forms';
 import { FilterComponent } from './components/filter/filter.component';
 import { PickComponent } from './components/pick/pick.component';
 import { MakePicComponent } from './components/make-pic/make-pic.component';
+import { TimerComponent } from './components/timer/timer.component';
 
 const matModules = [MatTableModule, MatProgressBarModule,
 MatSortModule, MatPaginatorModule];
 @NgModule({
-  declarations: [UserComponent, FilterComponent, PickComponent, MakePicComponent],
+  declarations: [UserComponent, FilterComponent,
+    PickComponent, MakePicComponent, TimerComponent],
     imports: [
         CommonModule,
         UserRoutingModule,

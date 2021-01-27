@@ -10,6 +10,7 @@
 
       <div *ngIf="groups.length > 1">
         <ng-select
+          #select
           [items]="groups"
           bindLabel="name"
           placeholder="Filter by Group name"
@@ -20,6 +21,7 @@
           (remove)="onRemove($event)"
         ></ng-select>
       </div>
+      <button mat-raised-button type="button" (click)="clearSelect()">Clear</button>
     </mat-card>
   </div>
   <ng-container *ngIf="nameFilter$ | async"></ng-container>

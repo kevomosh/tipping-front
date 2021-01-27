@@ -1,17 +1,10 @@
-<!--<h1 mat-dialog-title>{{data.error}}</h1>-->
-<!--<div mat-dialog-content>-->
-<!--  <p>{{data.status}}</p>-->
-<!--  <p>{{data.message}}</p>-->
-<!--</div>-->
-<!--<div mat-dialog-actions>-->
-<!--  <button mat-button mat-dialog-close>Close</button>-->
-<!--</div>-->
+
 <h2>
   {{data.type | titlecase}}
 </h2>
 <div class="content-style">
- {{data.error}} due to {{data.message}}
+ {{data.responseHeader}} due to {{data.message}}
 </div>
 <div style="text-align: center">
-  <button mat-flat-button (click)="dismissAndReroute()">{{data.btnUrl}}</button>
+  <button mat-flat-button (click)="dismissAndReroute(data.btnUrls[0])">{{data.btnLabels[0]}}</button>
 </div>

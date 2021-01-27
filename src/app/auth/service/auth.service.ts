@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import jwt_decode from 'jwt-decode';
 import {HttpClient} from '@angular/common/http';
 import {environment} from '../../../environments/environment';
-import {BehaviorSubject, Observable } from 'rxjs';
+import {BehaviorSubject, combineLatest, Observable} from 'rxjs';
 import {GroupDTO} from '../../dto/groupDTO';
 import {LoginView} from '../../views/loginView';
 import {LoginDTO} from '../../dto/loginDTO';
@@ -14,6 +14,49 @@ import {RegisterView} from '../../views/registerView';
 })
 export class AuthService {
   constructor(private http: HttpClient) { }
+
+ get token$(): Observable<string> {
+    return this._token$.asObservable();
+ }
+
+  get userName$(): Observable<string>{
+    return this._userName$.asObservable();
+  }
+
+  get role$(): Observable<string> {
+    return this._role$.asObservable();
+  }
+
+  get aflGroups$(): Observable<GroupDTO[]> {
+    return this._aflGroups$.asObservable();
+  }
+
+  get nrlGroups$(): Observable<GroupDTO[]> {
+    return this._nrlGroups$.asObservable();
+  }
+
+  get isLoggedIn$(): Observable<boolean> {
+    return this.token$.pipe(
+      map(token => {
+        if (token) {
+          const decoded = jwt_decode(token);
+          // @ts-ignore
+          const exp = decoded.exp;
+          if (exp === undefined) {
+            return false;
+          }
+
+          const date = new Date(0);
+          const tokenExpDate = date.setUTCSeconds(exp);
+
+          return tokenExpDate.valueOf() > new Date().valueOf();
+
+        } else {
+          return false;
+        }
+      })
+    );
+  }
   private baseUrl = environment.apiUrl;
 
   // tslint:disable-next-line:variable-name
@@ -32,6 +75,14 @@ export class AuthService {
   // tslint:disable-next-line:variable-name
   private _aflGroups$ = new BehaviorSubject<GroupDTO[]>(
     JSON.parse(localStorage.getItem('aflGroups'))
+  );
+
+  checkCompAndStatus$ = combineLatest([this.isLoggedIn$, this.isInNrl$(), this.isInAfl$()]).pipe(
+    map(([isLoggedIn, isInNrl, isInAfl]) => ({
+      isLoggedIn,
+      isInNrl,
+      isInAfl
+}))
   );
 
 
@@ -71,54 +122,38 @@ export class AuthService {
     return this.http.post<{ message: string }>(url, registerView);
   }
 
- get token$(): Observable<string> {
-    return this._token$.asObservable();
- }
+  logout(): void {
+    localStorage.removeItem('token');
+    localStorage.removeItem('role');
+    localStorage.removeItem('userName');
+    localStorage.removeItem('aflGroups');
+    localStorage.removeItem('nrlGroups');
+    this._token$.next('');
+    this._role$.next('');
+    this._userName$.next('');
+    this._aflGroups$.next([]);
+    this._nrlGroups$.next([]);
 
-  get userName$(): Observable<string>{
-    return this._userName$.asObservable();
   }
-
-  get role$(): Observable<string> {
-    return this._role$.asObservable();
-  }
-
-  get aflGroups$(): Observable<GroupDTO[]> {
-    return this._aflGroups$.asObservable();
-  }
-
-  get nrlGroups$(): Observable<GroupDTO[]> {
-    return this._nrlGroups$.asObservable();
-  }
-
-  get isLoggedIn$(): Observable<boolean> {
-    return this.token$.pipe(
-      map(token => {
-        if (token) {
-          const decoded = jwt_decode(token);
-          // @ts-ignore
-          const exp = decoded.exp;
-          if (exp === undefined) {
-            return false;
-          }
-
-          const date = new Date(0);
-          const tokenExpDate = date.setUTCSeconds(exp);
-
-          return tokenExpDate.valueOf() > new Date().valueOf();
-
+  private  isInNrl$(): Observable<boolean> {
+    return this.nrlGroups$.pipe(
+      map(groups => {
+        if (groups) {
+          return groups.length > 0;
         }
       })
     );
   }
 
-  logout(): void {
-    localStorage.removeItem('jwt');
-    localStorage.removeItem('role');
-    localStorage.removeItem('userMame');
-    localStorage.removeItem('aflGroups');
-    localStorage.removeItem('nrlGroups');
-
+  private  isInAfl$(): Observable<boolean> {
+    return this.aflGroups$.pipe(
+      map(groups => {
+        if (groups) {
+          return groups.length > 0;
+        }
+      })
+    );
   }
+
 
  }

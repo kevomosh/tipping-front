@@ -1,8 +1,15 @@
-<!-- <mat-button-toggle-group name="fontStyle" aria-label="Font Style">
-  <mat-button-toggle value="bold">Bold</mat-button-toggle>
-  <h3>vs</h3>
-  <mat-button-toggle value="underline">Underline</mat-button-toggle>
-</mat-button-toggle-group> -->
+<mat-sidenav-container>
+  <mat-sidenav #sidenav role="navigation">
+    <app-side-nav-list (sideNavClose)="sidenav.close()"></app-side-nav-list>
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <app-header (sidenavtoggle)="sidenav.toggle()"></app-header>
+    <main>
+      <router-outlet></router-outlet>
+    </main>
+  </mat-sidenav-content>
+</mat-sidenav-container>
 
 
-<router-outlet></router-outlet>
+
+

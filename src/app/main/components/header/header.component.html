@@ -1,0 +1,46 @@
+<mat-toolbar color="primary">
+  <div fxHide.gt-xs>
+    <button mat-icon-button (click)="onToggleSidenav()">
+      <mat-icon>menu</mat-icon>
+    </button>
+  </div>
+    <div fxFlex fxLayout fxLayoutAlign="end" fxHide.xs>
+      <ul fxLayout fxLayoutGap="15px" class="navigation-items">
+        <ng-container *ngIf="authService.isLoggedIn$  | async as res; else notLoggedIn">
+          <ng-container *ngIf="(authService.aflGroups$ | async)?.length > 0">
+            <li [mat-menu-trigger-for]="aflMenu">
+              <mat-icon>unfold_more</mat-icon>
+              <a matLine>Afl</a>
+            </li>
+            <mat-menu #aflMenu="matMenu" class="menu">
+              <button type="button" mat-menu-item routerLink="/user/results/afl">Results</button>
+              <button type="button" mat-menu-item routerLink="/user/make-pick/afl">Make</button>
+              <button type="button" mat-menu-item routerLink="/user/pick/afl">Picks</button>
+            </mat-menu>
+          </ng-container>
+          <ng-container *ngIf="(authService.nrlGroups$ | async)?.length > 0">
+            <li [mat-menu-trigger-for]="nrlMenu">
+              <mat-icon>unfold_more</mat-icon>
+              <a matLine>Nrl</a>
+            </li>
+            <mat-menu #nrlMenu="matMenu" class="menu">
+              <button type="button" mat-menu-item routerLink="/user/results/nrl">Results</button>
+              <button type="button" mat-menu-item routerLink="/user/make-pick/nrl">Make</button>
+              <button type="button" mat-menu-item routerLink="/user/pick/nrl">Picks</button>
+            </mat-menu>
+          </ng-container>
+          <li>
+            <a routerLink="/home" (click)="authService.logout()">Logout</a>
+          </li>
+        </ng-container>
+      </ul>
+    </div>
+</mat-toolbar>
+  <ng-template #notLoggedIn>
+    <li>
+      <a routerLink="/auth">Login</a>
+    </li>
+    <li>
+      <a routerLink="/auth/register">Register</a>
+    </li>
+  </ng-template>

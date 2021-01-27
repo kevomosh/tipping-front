@@ -1,0 +1,13 @@
+<div fxLayout="row" fxLayoutAlign="center center">
+  <div  fxFlex="40" fxFlex.lt-md="90">
+    <div *ngIf="timer$ | async as timer" class="timer">
+      <h4>Time Left to Deadline </h4>
+      <span>{{timer.days}}</span>Day(s)
+      <span>{{timer.hours}}</span>Hrs
+      <span>{{timer.minutes}}</span>Min
+      <span>{{timer.seconds}}</span>S
+    </div>
+  </div>
+</div>
+
+

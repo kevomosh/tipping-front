@@ -11,5 +11,7 @@ export interface PickResultDTO {
   picks: PickDTO[];
   winners: TeamSelectedDTO[];
   gamesForWeek: GameDTO[];
+  deadLine: Date;
+  weekNumber: number;
 
 }

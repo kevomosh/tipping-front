@@ -2,11 +2,18 @@
   background-color: #66cc66;
 }
 
+.right {
+  text-align: right;
+}
+
 .color-change-title {
   color: #2eb82e;
 }
 
-//:host ::ng-deep .datatable-body-cell {
-//  display: flex !important;
-//  align-items: center !important;
-//}
+.first {
+  margin-right: 2em;
+}
+.second {
+  margin-left: 2em;
+}
+

@@ -8,7 +8,7 @@ import {RegisterView} from '../../../views/registerView';
 import {takeUntil, tap} from 'rxjs/operators';
 import {Subject} from 'rxjs';
 import {NotifierService} from '../../../shared/services/notifier.service';
-import {ErrorDTO} from '../../../dto/errorDTO';
+import {AlertDTO} from '../../../dto/AlertDTO';
 
 @Component({
   selector: 'app-register',
@@ -62,8 +62,6 @@ export class RegisterComponent implements OnInit, OnDestroy {
       });
   }
 
-
-
   onSubmit(): void{
     const result = this.registerForm.value;
 
@@ -80,14 +78,12 @@ export class RegisterComponent implements OnInit, OnDestroy {
       // TODO change url to appropriate one
       this.router.navigateByUrl('');
     }, error => {
-      const errotDTO: ErrorDTO = error.error;
-      errotDTO.btnUrl = 'Please try Again';
-
-      this.notifierService.showNotification(errotDTO, 'error', 5000);
+      const e = error.error;
+      const alert = new AlertDTO(e.status, e.error, e.message,
+        5000, 'error', ['Please try again'], ['/auth/register']);
+      this.notifierService.showNotification(alert);
       this.registerForm.reset();
     });
-    console.log(registerView);
-
   }
 
   ngOnDestroy(): void {

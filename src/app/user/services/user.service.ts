@@ -9,6 +9,7 @@ import {ParamsDTO} from '../../dto/paramsDTO';
 import {PickResultDTO} from '../../dto/PickResultDTO';
 import {LoadingService} from '../../shared/services/loading.service';
 import {GamesForWeekDTO} from '../../dto/gamesForWeekDTO';
+import {MakePickView} from '../../views/makePickView';
 
 @Injectable({
   providedIn: 'root'
@@ -38,6 +39,11 @@ export class UserService {
       }
     }
     return d;
+  }
+
+  createPick(comp: string, info: MakePickView): Observable<{ message: string }> {
+    const url = `${this.baseUrl}/user/${comp}/createPick`;
+    return this.http.post<{ message: string }>(url, info);
   }
 
   getGames(comp: string, weekNumber?: number): Observable<GamesForWeekDTO> {
