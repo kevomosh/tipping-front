@@ -46,7 +46,6 @@ export class UserComponent implements OnInit, OnDestroy, AfterViewChecked {
 
 
   ngOnInit(): void {
-
   }
 
   setPage(event: any): void {

@@ -1,10 +1,13 @@
-
+<div >
 <h2>
   {{data.type | titlecase}}
 </h2>
 <div class="content-style">
- {{data.responseHeader}} due to {{data.message}}
+ {{data.responseHeader}}!!!  {{data.message}}
 </div>
-<div style="text-align: center">
-  <button mat-flat-button (click)="dismissAndReroute(data.btnUrls[0])">{{data.btnLabels[0]}}</button>
+<div fxLayout="row" fxLayoutAlign="space-between center">
+  <ng-container *ngFor="let lab of data.btnLabels;let i = index">
+    <button  mat-flat-button (click)="dismissAndReroute(data.btnUrls[i])">{{lab}}</button>
+  </ng-container>
+</div>
 </div>

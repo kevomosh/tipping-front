@@ -79,7 +79,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
       this.router.navigateByUrl('');
     }, error => {
       const e = error.error;
-      const alert = new AlertDTO(e.status, e.error, e.message,
+      const alert = new AlertDTO(e.status, e.error, e.message, 'bottom',
         5000, 'error', ['Please try again'], ['/auth/register']);
       this.notifierService.showNotification(alert);
       this.registerForm.reset();

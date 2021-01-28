@@ -1,13 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {UserService} from '../../services/user.service';
-import {map, switchMap, tap} from 'rxjs/operators';
+import {catchError, map, switchMap, tap} from 'rxjs/operators';
 import {ColumnMode} from '@swimlane/ngx-datatable';
 import {TeamSelectedDTO} from '../../../dto/teamSelectedDTO';
 import {ParamService} from '../../services/param.service';
 import {AuthService} from '../../../auth/service/auth.service';
-import {combineLatest} from 'rxjs';
+import {BehaviorSubject, combineLatest, throwError} from 'rxjs';
 import {LoadingService} from '../../../shared/services/loading.service';
+import {NotifierService} from '../../../shared/services/notifier.service';
+import {AlertDTO} from '../../../dto/AlertDTO';
 
 
 @Component({
@@ -22,6 +24,7 @@ export class PickComponent implements OnInit {
               private paramService: ParamService,
               private authService: AuthService,
               private loadingService: LoadingService,
+              private notifierService: NotifierService,
               private router: Router) { }
 
   ColumnMode = ColumnMode;
@@ -31,6 +34,7 @@ export class PickComponent implements OnInit {
   loading = true;
   beforeDeadline = false;
   compStr: string;
+  httpError$ = new BehaviorSubject(false);
 
   combined$ = this.activatedRoute.paramMap.pipe(
     switchMap(param => {
@@ -71,9 +75,17 @@ export class PickComponent implements OnInit {
         const teamObj = Object.assign({}, ...teamsList);
         return  {...others, ...teamObj};
       });
-
+    }),
+    catchError(error => {
+      this.httpError$.next(true);
+      const urlString1 = `/user/pick/${this.compStr}`;
+      const urlSting2 = `/user/make-pick/${this.compStr}`;
+      const e = error.error;
+      const alert = new AlertDTO(e.status, e.error, e.message, 'bottom',
+        0, 'error', ['Make pick', 'Go to latest week'], [urlSting2, urlString1]);
+      this.notifierService.showNotification(alert);
+      return throwError(error);
     })
-
   );
 
   ngOnInit(): void {

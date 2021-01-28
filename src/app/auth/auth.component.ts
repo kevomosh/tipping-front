@@ -57,7 +57,7 @@ export class AuthComponent implements OnInit, OnDestroy {
       this.router.navigateByUrl(this.returnUrl);
     }, error => {
       const e = error.error;
-      const alert = new AlertDTO(e.status, e.error, e.message,
+      const alert = new AlertDTO(e.status, e.error, e.message, 'bottom',
         5000, 'error', ['Please try again'], ['/auth']);
       this.notifierService.showNotification(alert);
       this.loginForm.reset();

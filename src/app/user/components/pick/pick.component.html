@@ -1,5 +1,5 @@
 
-<div fxLayout="column" fxLayoutGap="10px" *ngIf="combined$ | async as res; else loading">
+<div fxLayout="column" fxLayoutGap="10px" *ngIf="combined$ | async as res; else loadingOrError">
   <ng-container *ngIf="beforeDeadline">
     <app-timer
       [deadline]="res.result.deadLine"
@@ -23,8 +23,6 @@
         mat-raised-button type="button"
         *ngIf="res.result.fwp" class="second">Next</button>
     </div>
-
-
 
 <div fxLayout="row" fxLayoutAlign="center center">
   <div fxFlex="70" fxFlex.lt-md="100">
@@ -71,6 +69,10 @@
 </div>
 </div>
 
+<ng-template #loadingOrError>
+  <ng-container *ngIf="httpError$ | async; else loading">
+  </ng-container>
+</ng-template>
 <ng-template #loading>
   <div fxLayout="row" fxLayoutAlign="center center" style="height: 100%; margin-top: 20px">
     <mat-progress-spinner

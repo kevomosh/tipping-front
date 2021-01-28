@@ -1,0 +1,82 @@
+<div *ngIf="combined$ | async as comb">
+  <div fxLayoutAlign="center center">
+    <mat-card fxFlex="80" fxFlex.lt-md="90">
+      <form fxLayoutAlign="stretch" fxLayout="column"
+            [formGroup]="newWeekForm" (ngSubmit)="onSubmit()" class="form">
+        <h3>Weeks Present  {{comb.weekNumber}}</h3>
+
+        <div fxLayout="row" fxLayoutAlign="space-around center"
+        >
+          <mat-form-field>
+            <input
+              matInput
+              [ngxMatDatetimePicker]="datepicker"
+              formControlName="deadLine"
+              [min]="minimum"
+              placeholder="Enter deadline"
+            >
+            <mat-datepicker-toggle  [for]="datepicker" matSuffix></mat-datepicker-toggle>
+            <ngx-mat-datetime-picker #datepicker></ngx-mat-datetime-picker>
+          </mat-form-field>
+          <mat-form-field fxFlex="10">
+            <mat-label>Week no</mat-label>
+            <mat-select formControlName="weekNumber">
+              <mat-option
+                *ngFor="let weekNumber of weekNumberRange"
+                [value]="weekNumber">{{weekNumber}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+        </div>
+
+        <div
+          formArrayName="matchesThisWeek"
+          *ngFor="let group of groupFormArray()?.controls; let i = index"
+        >
+          <div formGroupName="{{i}}">
+            <div fxLayout="row" fxLayoutAlign="space-around center" >
+              <mat-form-field fxFlex="10">
+                <mat-label>Game no</mat-label>
+                <mat-select formControlName="gameNumber">
+                  <mat-option
+                    *ngFor="let gameNumber of gameNumberRange"
+                   [value]="gameNumber">{{gameNumber}}</mat-option>
+                </mat-select>
+              </mat-form-field>
+                <ng-select
+                  fxFlex="20"
+                  formControlName="homeTeam"
+                [items]="comb.teamNames"
+                placeholder="HomeTeam"
+                ></ng-select>
+                <ng-select
+                  fxFlex="20"
+                  formControlName="awayTeam"
+                  [items]="comb.teamNames"
+                  placeholder="AwayTeam"
+                ></ng-select>
+
+              <button mat-icon-button
+                      *ngIf="groupFormArray().length > 1"
+                      (click)="removeMatchButtonClick(i)">
+                <mat-icon>clear</mat-icon>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div fxFlex="row" fxLayoutAlign="center center">
+          <button
+            *ngIf="groupFormArray().length < 9"
+            color="warn"
+            mat-raised-button type="button"
+            (click)="addMatchButtonClick()">
+            Add Game
+          </button>
+        </div>
+        <button mat-raised-button [disabled]="newWeekForm.invalid">Submit</button>
+
+      </form>
+    </mat-card>
+  </div>
+</div>
+

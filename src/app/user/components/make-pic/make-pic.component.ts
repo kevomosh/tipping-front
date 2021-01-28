@@ -42,6 +42,7 @@ export class MakePicComponent implements OnInit, OnDestroy {
   }
 
   // TODO get relevant buttons and ulrs , either following week or check weeks pick;
+  // TODO ALERTDTO, remove vertical position if can figure out how to place it in the middle
   onSubmitForm(event: MakePickView): void {
     this.userService.createPick(this.competition, event)
       .pipe(takeUntil(this.destroy$))
@@ -49,7 +50,7 @@ export class MakePicComponent implements OnInit, OnDestroy {
       console.log(res);
     }, error => {
       const e = error.error;
-      const alert = new AlertDTO(e.status, e.error, e.message,
+      const alert = new AlertDTO(e.status, e.error, e.message, 'bottom',
         5000, 'error', ['Please try again'], ['/auth']);
       this.notifierService.showNotification(alert);
     });

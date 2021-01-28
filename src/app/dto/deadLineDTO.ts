@@ -3,4 +3,5 @@ export interface DeadLineDTO {
   hours: number;
   minutes: number;
   seconds: number;
+
 }
