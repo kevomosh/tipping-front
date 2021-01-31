@@ -1,14 +1,17 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit, QueryList, ViewChildren} from '@angular/core';
 import {AuthService} from '../../service/auth.service';
 import {FormArray, FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {Router} from '@angular/router';
 import {MustMatch} from './mustMatch';
 import {GroupDTO} from '../../../dto/groupDTO';
 import {RegisterView} from '../../../views/registerView';
-import {takeUntil, tap} from 'rxjs/operators';
-import {Subject} from 'rxjs';
+import {map, takeUntil, tap} from 'rxjs/operators';
+import {combineLatest, Subject} from 'rxjs';
 import {NotifierService} from '../../../shared/services/notifier.service';
-import {AlertDTO} from '../../../dto/AlertDTO';
+import {HttpErrorResponse} from '@angular/common/http';
+import {Alert} from '../../../dto/Alert';
+import {MatSnackBar} from '@angular/material/snack-bar';
+import {NgSelectComponent} from '@ng-select/ng-select';
 
 @Component({
   selector: 'app-register',
@@ -19,11 +22,27 @@ export class RegisterComponent implements OnInit, OnDestroy {
   constructor(private authService: AuthService,
               private fb: FormBuilder,
               private router: Router,
+              private snackBar: MatSnackBar,
               public notifierService: NotifierService,
   ) { }
-              registerForm: FormGroup;
 
-  allGroups$ = this.authService.getAllGroups();
+  @ViewChildren(NgSelectComponent) children: QueryList<NgSelectComponent>;
+
+  registerForm: FormGroup;
+
+  combined$ = combineLatest([this.authService.isLoggedIn$, this.authService.loading$, this.authService.getAllGroups()]).pipe(
+    map(([loggedIn, loading, allGroups]) => ({
+      loggedIn,
+      loading,
+      allGroups
+    })),
+    tap(res => {
+      if (res.loggedIn) {
+        this.router.navigateByUrl('/home');
+      }
+    })
+  );
+
   private destroy$ = new Subject<void>();
   selectedGroups: GroupDTO[] = [];
 
@@ -39,32 +58,29 @@ export class RegisterComponent implements OnInit, OnDestroy {
     this.selectedGroups = [];
   }
 
-  // TODO check if person is already logged in then redirect
   ngOnInit(): void {
     this.registerForm = this.fb.group({
       name: ['',
         [Validators.required,
-          Validators.minLength(3),
+          Validators.minLength(5),
           Validators.maxLength(20)
       ]],
       email: ['', [Validators.required, Validators.email]],
       password: ['',
        [
          Validators.required,
-         Validators.minLength(5),
-         Validators.maxLength(40)
+         Validators.pattern('^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d]{8,}$')
        ],
       ],
-      cpassword: ['', Validators.required]
-    },
-      {
-        Validator: MustMatch('password', 'cpassword'),
-      });
+      cPassword: ['', Validators.required]
+    }, {
+      validator: MustMatch('password', 'cPassword')
+
+    });
   }
 
   onSubmit(): void{
     const result = this.registerForm.value;
-
     const registerView: RegisterView = {
       name: result.name,
       email: result.email,
@@ -75,15 +91,35 @@ export class RegisterComponent implements OnInit, OnDestroy {
     this.authService.register(registerView).pipe(
       takeUntil(this.destroy$)
     ).subscribe(x => {
-      // TODO change url to appropriate one
-      this.router.navigateByUrl('');
+      setTimeout(() => {
+        this.authService.setLoading(false);
+        this.router.navigateByUrl('/auth');
+      }, 3000);
+      this.snackBar.open('Successfully registered, now being diverted to log in', '', {
+        duration: 3000,
+        horizontalPosition: 'center',
+        verticalPosition: 'bottom',
+      });
     }, error => {
-      const e = error.error;
-      const alert = new AlertDTO(e.status, e.error, e.message, 'bottom',
-        5000, 'error', ['Please try again'], ['/auth/register']);
-      this.notifierService.showNotification(alert);
-      this.registerForm.reset();
+      this.handleError(error);
     });
+  }
+
+  handleError(error: HttpErrorResponse): void {
+    this.authService.setLoading(false);
+    this.children.forEach(child => child.handleClearClick());
+    const e = error.error;
+    const btnUrls = ['/auth/register'];
+    const btnLabels = ['Try again'];
+    const alert: Alert = {
+      status: e.status,
+      responseHeader: e.error,
+      message: e.message,
+      btnLabels,
+      btnUrls,
+    };
+    this.notifierService.showErrorDialog(alert);
+    this.registerForm.reset();
   }
 
   ngOnDestroy(): void {
@@ -91,6 +127,5 @@ export class RegisterComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  // TODO confirm password to work
   // TODO configure error messages according to error passed
 }

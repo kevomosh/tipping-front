@@ -1,3 +1,4 @@
+<ng-container *ngIf="combined$ | async as comb">
 <div  fxLayoutAlign="center center">
   <mat-card fxFlex="40" fxFlex.lt-md="90"  fxLayout="column">
     <mat-toolbar>Login Page</mat-toolbar>
@@ -12,11 +13,19 @@
       <mat-form-field >
         <mat-label>Password</mat-label>
         <input matInput type="password" placeholder="Password" formControlName="password">
-        <mat-error>Password is <strong>required</strong></mat-error>
+        <mat-error *ngIf="loginForm.get('password').hasError('required')">Password is <strong>required</strong></mat-error>
+        <mat-error *ngIf="loginForm.get('password').invalid && !loginForm.get('password').hasError('required')">
+          Minimum 8 characters, at least one uppercase, one lowercase and one number
+        </mat-error>
       </mat-form-field>
-      <button mat-raised-button color="primary"
-              type="submit" class="btn" [disabled]="loginForm.invalid">Login</button>
+
+      <button mat-raised-button color="primary" [class.spinner]="comb.loading"
+              type="submit" class="btn" [disabled]="loginForm.invalid || comb.loading">Login</button>
+      <div class="center">
+        <a mat-stroked-button routerLink="/auth/forgot-password">Forgot password</a>
+      </div>
     </form>
   </mat-card>
 </div>
+</ng-container>
 

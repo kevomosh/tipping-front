@@ -19,6 +19,10 @@ export class AuthService {
     return this._token$.asObservable();
  }
 
+ get loading$(): Observable<boolean> {
+    return this._loading$.asObservable();
+ }
+
   get userName$(): Observable<string>{
     return this._userName$.asObservable();
   }
@@ -60,6 +64,8 @@ export class AuthService {
   private baseUrl = environment.apiUrl;
 
   // tslint:disable-next-line:variable-name
+  private _loading$ = new BehaviorSubject(false);
+  // tslint:disable-next-line:variable-name
   private _userName$ = new BehaviorSubject<string>(localStorage.getItem('username'));
   // tslint:disable-next-line:variable-name
   private _role$ = new BehaviorSubject<string>(localStorage.getItem('role'));
@@ -85,13 +91,33 @@ export class AuthService {
 }))
   );
 
+  setLoading(val: boolean): void {
+    this._loading$.next(val);
+  }
 
   getAllGroups(): Observable<{ aflGroups: GroupDTO[], nrlGroups: GroupDTO[] }> {
+   this.setLoading(true);
    const groupsUrl = `${this.baseUrl}/auth/getGroups`;
-   return this.http.get<{ aflGroups: GroupDTO[], nrlGroups: GroupDTO[] }>(groupsUrl);
+   return this.http.get<{ aflGroups: GroupDTO[], nrlGroups: GroupDTO[] }>(groupsUrl).pipe(
+     tap(() => this.setLoading(false))
+   );
 }
 
+
+  createToken(info: {email: string}): Observable<{ message: string }> {
+    const url = `${this.baseUrl}/auth/createToken`;
+    this.setLoading(true);
+    return this.http.post<{ message: string }>(url, info);
+  }
+
+  resetPassword(info: {newPassword: string}, token: string): Observable<{ message: string }> {
+    const url = `${this.baseUrl}/auth/changePassword/${token}`;
+    this.setLoading(true);
+    return this.http.post<{ message: string }>(url, info);
+  }
+
   login(loginView: LoginView): Observable<LoginDTO> {
+    this.setLoading(true);
     const loginUrl = `${this.baseUrl}/auth/login`;
     return this.http.post<LoginDTO>(loginUrl, loginView).pipe(
       tap(result => {
@@ -111,13 +137,14 @@ export class AuthService {
         localStorage.setItem('userName', userName);
         localStorage.setItem('nrlGroups', JSON.stringify(result.nrlGroups));
         localStorage.setItem('aflGroups', JSON.stringify(result.aflGroups));
-
+        this.setLoading(false);
       }),
       shareReplay()
     );
   }
 
   register(registerView: RegisterView): Observable<{ message: string }> {
+    this.setLoading(true);
     const url = `${this.baseUrl}/auth/register`;
     return this.http.post<{ message: string }>(url, registerView);
   }
@@ -154,6 +181,4 @@ export class AuthService {
       })
     );
   }
-
-
  }

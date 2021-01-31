@@ -1,12 +1,11 @@
 
 <div fxLayout="column" fxLayoutGap="10px" *ngIf="combined$ | async as res; else loadingOrError">
-  <ng-container *ngIf="beforeDeadline">
-    <app-timer
+  <h1 class="title">Picks for round {{res.result.weekNumber}}</h1>
+  <app-timer
       [deadline]="res.result.deadLine"
     ></app-timer>
-  </ng-container>
 
-  <ng-container *ngIf="res.result.total > 1">
+  <ng-container *ngIf="!isBeforeDeadline(res.result.deadLine)">
     <app-filter
       [groups]="res.groups"
     ></app-filter>
@@ -27,6 +26,7 @@
 <div fxLayout="row" fxLayoutAlign="center center">
   <div fxFlex="70" fxFlex.lt-md="100">
   <ngx-datatable
+    [rowClass]="getRowClass"
     class="material striped"
     [rows]="rows"
     [columnMode]="ColumnMode.force"
@@ -41,7 +41,7 @@
     (page)="setPage($event)"
     [loadingIndicator]="res.isLoading"
   >
-    <ngx-datatable-column [sortable]="false" name="Name" [frozenLeft]="true" [maxWidth]="120"></ngx-datatable-column>
+    <ngx-datatable-column [sortable]="false" name="Name" [frozenLeft]="true" [maxWidth]="80"></ngx-datatable-column>
     <ng-container *ngFor="let a of gameColumnNames; let i = index">
       <ngx-datatable-column prop="a" [maxWidth]="120">
         <ng-template ngx-datatable-header-template>

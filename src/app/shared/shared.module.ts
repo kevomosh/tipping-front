@@ -21,6 +21,7 @@ import {MatMenuModule} from '@angular/material/menu';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
+import {MatExpansionModule} from '@angular/material/expansion';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { ErrorComponent } from './components/error/error.component';
@@ -30,6 +31,7 @@ import {
   NgxMatNativeDateModule,
   NgxMatTimepickerModule
 } from '@angular-material-components/datetime-picker';
+import { ErrorDialogComponent } from './components/error-dialog/error-dialog.component';
 
 const matModules = [MatRadioModule, MatCardModule,
   MatButtonModule, MatButtonToggleModule,
@@ -41,10 +43,11 @@ const matModules = [MatRadioModule, MatCardModule,
   MatListModule, MatMenuModule,
   MatProgressSpinnerModule, MatDatepickerModule,
   MatNativeDateModule, NgxMatTimepickerModule,
-  NgxMatDatetimePickerModule, NgxMatNativeDateModule];
+  NgxMatDatetimePickerModule, NgxMatNativeDateModule,
+  MatExpansionModule];
 
 @NgModule({
-  declarations: [ErrorComponent, PickFormComponent],
+  declarations: [ErrorComponent, PickFormComponent, ErrorDialogComponent],
   imports: [
     CommonModule,
     matModules,

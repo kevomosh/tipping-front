@@ -91,7 +91,7 @@ export class CreateWeekComponent implements OnInit, OnDestroy {
     }, error => {
       const btnUrl = `/admin/create-week/${this.competition}`;
       const e = error.error;
-      const alert = new AlertDTO(e.status, e.error, e.message, 'bottom',
+      const alert = new AlertDTO(e.status, e.error, e.message,
         5000, 'error', ['Please try again'], [btnUrl]);
       this.notifierService.showNotification(alert);
       this.newWeekForm.reset();
@@ -102,5 +102,4 @@ export class CreateWeekComponent implements OnInit, OnDestroy {
     this.destroy$.next();
     this.destroy$.complete();
   }
-
 }

@@ -4,12 +4,25 @@
   padding: 5px;
   margin: 5px;
 }
+mat-card {
+  margin-top: 20px;
+  background-color: #E8E8E8;
+
+}
+.sub-btn {
+  margin-top: 20px;
+}
+
 .slider {
   margin-top: 10px;
 }
 .mat-button-toggle-checked {
   color: #000;
   background-color: #77ff33;
+}
+:host .mat-button-toggle-group{
+  border-radius: 20px !important;
+  margin-top: 20px;
 }
 
 .list {

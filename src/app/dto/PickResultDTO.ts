@@ -13,5 +13,4 @@ export interface PickResultDTO {
   gamesForWeek: GameDTO[];
   deadLine: Date;
   weekNumber: number;
-
 }

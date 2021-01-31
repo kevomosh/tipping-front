@@ -8,7 +8,7 @@
       <ul fxLayout fxLayoutGap="15px" class="navigation-items">
         <ng-container *ngIf="authService.isLoggedIn$  | async as res; else notLoggedIn">
           <li>
-            <a routerLink="/admin/create-week/nrl">Post Result</a>
+            <a routerLink="/admin/add-result/nrl">Post Result</a>
           </li>
           <ng-container *ngIf="(authService.aflGroups$ | async)?.length > 0">
             <li [mat-menu-trigger-for]="aflMenu">

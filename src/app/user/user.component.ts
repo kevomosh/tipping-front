@@ -61,7 +61,7 @@ export class UserComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   ngOnDestroy(): void {
-    this.paramService.resetAll();
+   // this.paramService.resetAll();
   }
 
   // ngAfterViewInit(): void {

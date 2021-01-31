@@ -1,7 +1,8 @@
-<form [formGroup]="pickForm" (ngSubmit)="onSubmit()">
+<mat-card>
+<form [formGroup]="pickForm" (ngSubmit)="onSubmit()" *ngIf="info.games.length > 0">
   <div
     formArrayName="teamsSelected"
-    *ngFor="let pick of controls; let i = index"
+    *ngFor="let pick of teamsSelectedArray()?.controls; let i = index"
   >
     <div formGroupName="{{i}}" fxLayout="column" fxLayoutGap="5px">
       <mat-button-toggle-group fxLayout="row" formControlName="team" name="fontStyle" aria-label="Font Style">
@@ -22,7 +23,7 @@
             >
             </ng-select>
           </div>
-          <div>
+          <div *ngIf="!isAdmin">
             <button mat-raised-button type="button" (click)="getRandomScorer(info.players, i)">Random</button>
           </div>
         </div>
@@ -37,12 +38,15 @@
             [step]="1"
             formControlName="margin"
           ></mat-slider>
-          <div fxFlex="30">
+          <div fxFlex="30" *ngIf="!isAdmin">
             <button mat-raised-button type="button" (click)="getRandomMargin(i)">Random</button>
           </div>
         </div>
       </ng-container>
     </div>
   </div>
+  <div fxLayout="row" fxLayoutAlign="center center" fxFill class="sub-btn">
   <button mat-raised-button [disabled]="!isAdmin && pickForm.invalid">Submit</button>
+  </div>
 </form>
+</mat-card>

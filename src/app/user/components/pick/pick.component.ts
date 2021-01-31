@@ -9,7 +9,8 @@ import {AuthService} from '../../../auth/service/auth.service';
 import {BehaviorSubject, combineLatest, throwError} from 'rxjs';
 import {LoadingService} from '../../../shared/services/loading.service';
 import {NotifierService} from '../../../shared/services/notifier.service';
-import {AlertDTO} from '../../../dto/AlertDTO';
+import {HttpErrorResponse} from '@angular/common/http';
+import {Alert} from '../../../dto/Alert';
 
 
 @Component({
@@ -32,7 +33,6 @@ export class PickComponent implements OnInit {
   rows = [];
   gameColumnNames: string[] ;
   loading = true;
-  beforeDeadline = false;
   compStr: string;
   httpError$ = new BehaviorSubject(false);
 
@@ -54,10 +54,8 @@ export class PickComponent implements OnInit {
         }))
       );
     }),
-   // tap(ans => this.timeService.checkDeadLine(ans.result.deadLine)),
     tap(res => {
       this.loadingService.setLoading(false);
-      this.checkDeadline(res.result.deadLine);
       this.gameColumnNames = [];
       this.winners = res.result.winners;
       const picks = res.result.picks;
@@ -77,22 +75,44 @@ export class PickComponent implements OnInit {
       });
     }),
     catchError(error => {
-      this.httpError$.next(true);
-      const urlString1 = `/user/pick/${this.compStr}`;
-      const urlSting2 = `/user/make-pick/${this.compStr}`;
-      const e = error.error;
-      const alert = new AlertDTO(e.status, e.error, e.message, 'bottom',
-        0, 'error', ['Make pick', 'Go to latest week'], [urlSting2, urlString1]);
-      this.notifierService.showNotification(alert);
-      return throwError(error);
+     this.handleError(error);
+     return throwError(error);
     })
   );
+
+  handleError(error: HttpErrorResponse): void {
+    this.httpError$.next(true);
+    const e = error.error;
+    const btnLabels = ['Make pick', 'Go to latest week'];
+    const btnUrls = [`/user/make-pick/${this.compStr}`, `/user/pick/${this.compStr}`, ];
+    const alert: Alert = {
+      status: e.status,
+      responseHeader: e.error,
+      message: e.message,
+      btnLabels,
+      btnUrls,
+    };
+    this.notifierService.showErrorDialog(alert);
+  }
 
   ngOnInit(): void {
 
   }
 
+  getRowClass = (row) => {
+    return {
+      'row-color2': row.byUser === false,
+    };
+  }
+
+  isBeforeDeadline(deadline: Date): boolean {
+    const deadlineTime = new Date(deadline).getTime();
+    const currentTime =  new Date().getTime();
+    return  deadlineTime > currentTime;
+  }
+
   navigateToWeek(weekNumber: number): void {
+    this.paramService.resetPageNumber();
     const url = `/user/pick/${this.compStr}/${weekNumber}`;
     this.router.navigateByUrl(url);
   }
@@ -101,14 +121,8 @@ export class PickComponent implements OnInit {
     return weeknumber === 1;
   }
 
-  checkDeadline(deadline: Date): void {
-    const deadlineTime = new Date(deadline).getTime();
-    const currentTime =  new Date().getTime();
-    this.beforeDeadline = deadlineTime > currentTime;
-  }
 
   isSelectionWinner(index: number, pick: string): boolean {
-
     const length = this.winners.length;
     if ( length > 0 && length > index) {
       return this.winners[index].team === pick;

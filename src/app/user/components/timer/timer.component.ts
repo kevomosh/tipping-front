@@ -20,6 +20,12 @@ export class TimerComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  isBeforeDeadline(deadline: Date): boolean {
+    const deadlineTime = new Date(deadline).getTime();
+    const currentTime =  new Date().getTime();
+    return  deadlineTime > currentTime;
+  }
+
   private getDateTime(): DeadLineDTO {
     let res: DeadLineDTO = {
       days: 0,

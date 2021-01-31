@@ -16,6 +16,7 @@ input[type="checkbox"] {
   display: none;
 }
 
+
 .spinner {
   display: flex;
   align-content: center;
@@ -32,22 +33,4 @@ input[type="checkbox"] {
   height: 100%;
 }
 
-.custom-btns .inner:not(:disabled):not(.disabled).active,
-.custom-btns .inner:not(:disabled):not(.disabled):active,
-.custom-btns .show > .btn-primary.dropdown-toggle {
-  color: #000;
-  background-color: #77ff33;
-  border-color: #33ff99;
-}
-
-.custom-btns .inner {
-  color: #000;
-  background-color: #cccccc;
-  border-color: #cccccc;
-}
-
-.custom-btns .inner.focus,
-.inner:focus {
-  box-shadow: 0 0 0 0.2rem #1aff1a;
-}
 

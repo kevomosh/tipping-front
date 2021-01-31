@@ -11,7 +11,7 @@ const routes: Routes = [
     data: {info: ['ROLE_ADMIN']},
     component: CreateWeekComponent
   },
-  { path: '',
+  { path: 'add-result/:comp',
     canActivate: [AuthCompGuard],
     data: {info: ['ROLE_ADMIN']},
     component: AdminComponent

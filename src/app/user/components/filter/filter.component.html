@@ -1,15 +1,22 @@
 <div fxLayout="row" fxLayoutAlign="center center">
   <div  fxFlex="40" fxFlex.lt-md="90">
-    <mat-card  fxLayout="column" >
-      <mat-form-field >
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-description fxLayoutAlign="space-between">
+          Click to filter by group or name
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+      <mat-form-field fxLayout="row">
         <mat-label>Name</mat-label>
         <label>
           <input matInput placeholder="name" type="text" [formControl]="nameFormControl">
         </label>
       </mat-form-field>
 
-      <div *ngIf="groups.length > 1">
+      <ng-container *ngIf="nameFilter$ | async"></ng-container>
+      <div *ngIf="groups.length > 1" >
         <ng-select
+          appendTo="body"
           #select
           [items]="groups"
           bindLabel="name"
@@ -21,9 +28,8 @@
           (remove)="onRemove($event)"
         ></ng-select>
       </div>
-      <button mat-raised-button type="button" (click)="clearSelect()">Clear</button>
-    </mat-card>
+      <button  mat-raised-button type="button" (click)="clearSelect()">Clear</button>
+    </mat-expansion-panel>
   </div>
-  <ng-container *ngIf="nameFilter$ | async"></ng-container>
-
 </div>
+

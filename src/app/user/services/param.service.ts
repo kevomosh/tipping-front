@@ -11,17 +11,6 @@ export class ParamService {
 
 
 private mainParams$ = new BehaviorSubject<ParamsDTO>({});
-  // tslint:disable-next-line:variable-name
-  private _page$ = new BehaviorSubject<{page?: number}>({});
-  // tslint:disable-next-line:variable-name
-  private _size$ = new BehaviorSubject<{size?: number}>({});
-  // tslint:disable-next-line:variable-name
-  private _name$ = new BehaviorSubject<{name?: string}>({});
-  // tslint:disable-next-line:variable-name
-  private _groupId$ = new BehaviorSubject<{gid?: number[]}>({});
-  // tslint:disable-next-line:variable-name
-  private _sort$ = new BehaviorSubject<{sort?: string[]}>({});
-
 
   initializePagination(pageNumber: number, size: number): void {
     const val = { ...this.mainParams$.getValue()};
@@ -33,8 +22,18 @@ private mainParams$ = new BehaviorSubject<ParamsDTO>({});
     } else {
       this.mainParams$.next({page: pageNumber, size});
     }
-
   }
+
+  resetPageNumber(): void {
+    const val = { ...this.mainParams$.getValue()};
+    if (Object.keys(val).length > 0) {
+      val.page = 0;
+      this.mainParams$.next(val);
+    } else {
+      this.mainParams$.next({page: 0});
+    }
+  }
+
   setName(name: string): void {
     const val = { ...this.mainParams$.getValue()};
     if (name.length > 2) {
@@ -59,6 +58,12 @@ private mainParams$ = new BehaviorSubject<ParamsDTO>({});
       }
     }
   }
+
+  resetNameAndGroupId(): void {
+    const {gid, name, ...alt} = this.mainParams$.getValue();
+    alt.page = 0;
+    this.mainParams$.next(alt);
+}
 
   createSort(field: string, order: string): void {
     const val = { ...this.mainParams$.getValue()};
@@ -107,14 +112,4 @@ private mainParams$ = new BehaviorSubject<ParamsDTO>({});
       }
     }
   }
-
-
-  resetAll(): void {
-    this._page$.next({});
-    this._size$.next({});
-    this._name$.next({});
-    this._groupId$.next({});
-    this._sort$.next({});
-  }
-
 }

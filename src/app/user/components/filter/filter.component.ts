@@ -46,9 +46,11 @@ export class FilterComponent implements OnInit {
   }
 
   clearSelect(): void {
-    this.select.handleClearClick();
-    this.onClear();
-    // this.onClear();
+    if (this.groups.length > 1) {
+      this.select.handleClearClick();
+    }
+    this.nameFormControl.patchValue('');
+    this.paramService.resetNameAndGroupId();
   }
 
 }

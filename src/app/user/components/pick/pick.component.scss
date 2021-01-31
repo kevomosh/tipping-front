@@ -1,5 +1,6 @@
-.color-change {
-  background-color: #66cc66;
+
+.title {
+  text-align: center;
 }
 
 .right {
@@ -7,6 +8,7 @@
 }
 
 .color-change-title {
+  // color: #004d00;
   color: #2eb82e;
 }
 
@@ -15,5 +17,22 @@
 }
 .second {
   margin-left: 2em;
+
 }
+::ng-deep {
+  .row-color2 {
+ // background-color:   rgb(255, 179, 179);
+    background-color: #ffe6ff;
+   // background-color: rgb(255, 230, 230);
+  }
+}
+
+
+//
+///deep/ .row-color1 {
+//  background-color: rgb(96, 212, 96);
+//}
+///deep/ .row-color2 {
+//  background-color: rgb(51, 201, 228);
+//}
 

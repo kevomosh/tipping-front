@@ -1,0 +1,21 @@
+<div  fxLayoutAlign="center center">
+  <div  fxFlex="60" fxFlex.lt-md="90" fxLayout="column" fxLayoutGap="2px">
+    <div *ngIf="combined$ | async as comb">
+    <app-pick-form
+    [info]="comb.gamesInfo"
+    [limit]="comb.limit"
+    [isAdmin]="true"
+    (submitForm)="onSubmitForm($event, comb.competition)"
+    ></app-pick-form>
+      <button
+        mat-raised-button
+        color="warn"
+        type="button"
+        (click)="updateTotalScore(comb.competition)"
+        *ngIf="comb.gamesInfo.games.length === 0"
+      >Update Total Score</button>
+    </div>
+  </div>
+</div>
+
+

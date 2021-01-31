@@ -1,0 +1,9 @@
+<h1 mat-dialog-title>Error:  {{data.status}}</h1>
+<div mat-dialog-content>
+  {{data.responseHeader}}!!!  {{data.message}}
+</div>
+<div mat-dialog-actions >
+  <ng-container *ngFor="let lab of data.btnLabels;let i = index">
+    <button  mat-flat-button mat-dialog-close (click)="reroute(data.btnUrls[i])">{{lab}}</button>
+  </ng-container>
+</div>

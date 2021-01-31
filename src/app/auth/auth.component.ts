@@ -2,12 +2,12 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {AuthService} from './service/auth.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {MatDialog, MAT_DIALOG_DATA} from '@angular/material/dialog';
-import {Subject} from 'rxjs';
+import {combineLatest, Subject} from 'rxjs';
 import {LoginView} from '../views/loginView';
-import {takeUntil} from 'rxjs/operators';
+import {map, takeUntil, tap} from 'rxjs/operators';
 import {NotifierService} from '../shared/services/notifier.service';
-import {AlertDTO} from '../dto/AlertDTO';
+import {HttpErrorResponse} from '@angular/common/http';
+import {Alert} from '../dto/Alert';
 
 @Component({
   selector: 'app-auth',
@@ -19,12 +19,23 @@ export class AuthComponent implements OnInit, OnDestroy {
   constructor(private authService: AuthService,
               private activeRoute: ActivatedRoute,
               private fb: FormBuilder,
-              public dialog: MatDialog,
               public notifierService: NotifierService,
               private activatedRoute: ActivatedRoute,
               private router: Router) { }
 
- // TODO make sure to implement if user is already logged in
+  loading$ = this.authService.loading$;
+
+  combined$ = combineLatest([this.authService.isLoggedIn$, this.loading$]).pipe(
+    map(([loggedIn, loading]) => ({
+      loggedIn,
+      loading
+    })),
+    tap(res => {
+      if (res.loggedIn) {
+        this.router.navigateByUrl('/home');
+      }
+    })
+  );
 
   private destroy$ = new Subject<void>();
   loginForm: FormGroup;
@@ -39,8 +50,7 @@ export class AuthComponent implements OnInit, OnDestroy {
         '',
         [
           Validators.required,
-          Validators.minLength(5),
-          Validators.maxLength(40)
+          Validators.pattern('^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d]{8,}$')
         ]
       ]
     });
@@ -56,12 +66,24 @@ export class AuthComponent implements OnInit, OnDestroy {
     ).subscribe(x => {
       this.router.navigateByUrl(this.returnUrl);
     }, error => {
-      const e = error.error;
-      const alert = new AlertDTO(e.status, e.error, e.message, 'bottom',
-        5000, 'error', ['Please try again'], ['/auth']);
-      this.notifierService.showNotification(alert);
-      this.loginForm.reset();
+      this.authService.setLoading(false);
+      this.handleError(error);
     });
+  }
+
+  handleError(error: HttpErrorResponse): void {
+    const e = error.error;
+    const btnUrls = ['/auth', '/auth/change-password'];
+    const btnLabels = ['Try again', 'Change Password'];
+    const alert: Alert = {
+      status: e.status,
+      responseHeader: e.error,
+      message: e.message,
+      btnLabels,
+      btnUrls,
+    };
+    this.notifierService.showErrorDialog(alert);
+    this.loginForm.reset();
   }
 
   ngOnDestroy(): void {

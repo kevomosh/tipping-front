@@ -1,5 +1,6 @@
 import {GameDTO} from './gameDTO';
 import {PlayerDTO} from './playerDTO';
+import {PickDTO} from './PickDTO';
 
 export interface GamesForWeekDTO {
   deadLine: Date;
@@ -7,4 +8,5 @@ export interface GamesForWeekDTO {
   fwp: boolean;
   games: GameDTO[];
   players: PlayerDTO[];
+  pickOfWeek?: PickDTO;
 }
