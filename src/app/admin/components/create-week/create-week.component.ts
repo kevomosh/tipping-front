@@ -1,7 +1,7 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {AdminService} from '../../services/admin.service';
 import {FormArray, FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {switchMap, takeUntil} from 'rxjs/operators';
 import {Subject} from 'rxjs';
 import {NotifierService} from '../../../shared/services/notifier.service';
@@ -17,6 +17,7 @@ export class CreateWeekComponent implements OnInit, OnDestroy {
   constructor(private adminService: AdminService,
               private fb: FormBuilder,
               private notifierService: NotifierService,
+              private router: Router,
               private ativatedRoute: ActivatedRoute) { }
 
 
@@ -87,7 +88,7 @@ export class CreateWeekComponent implements OnInit, OnDestroy {
     this.adminService.createWeek(this.competition, info).pipe(
       takeUntil(this.destroy$)
     ).subscribe(res => {
-      console.log(res);
+      this.router.navigateByUrl(`/user/make-pic/${this.competition}/${info.weekNumber}`);
     }, error => {
       const btnUrl = `/admin/create-week/${this.competition}`;
       const e = error.error;

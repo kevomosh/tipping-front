@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import {environment} from '../../../environments/environment';
 import {HttpClient} from '@angular/common/http';
-import {Observable} from 'rxjs';
+import {BehaviorSubject, Observable} from 'rxjs';
 import {ResultDTO} from '../../dto/resultDTO';
 import {ParamService} from './param.service';
 import {map, switchMap, tap} from 'rxjs/operators';
@@ -20,7 +20,13 @@ export class UserService {
               private paramService: ParamService,
               private loadingService: LoadingService
               ) { }
+
+  get dataTransfer$(): Observable<boolean> {
+    return this._dataTransfer.asObservable();
+  }
   private baseUrl = environment.apiUrl;
+  // tslint:disable-next-line:variable-name
+  private _dataTransfer = new BehaviorSubject(false);
 
   private static createParamsUrl(params: ParamsDTO, initial: string): string {
     const a = params.page ? `${initial}page=${params.page}` : initial;
@@ -41,12 +47,18 @@ export class UserService {
     return d;
   }
 
+  setDataTransfer(val: boolean): void {
+    this._dataTransfer.next(val);
+  }
+
   createPick(comp: string, info: MakePickView): Observable<{ message: string }> {
+    this.setDataTransfer(true);
     const url = `${this.baseUrl}/user/${comp}/createPick`;
     return this.http.post<{ message: string }>(url, info);
   }
 
   getGames(comp: string, weekNumber?: number): Observable<GamesForWeekDTO> {
+    this.setDataTransfer(true);
     let url = `${this.baseUrl}/user/${comp}/getLatestGames`;
     if (weekNumber) {
       url = `${this.baseUrl}/user/${comp}/getGamesForWeek/${weekNumber}`;

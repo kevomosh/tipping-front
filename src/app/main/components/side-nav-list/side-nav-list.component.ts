@@ -1,4 +1,5 @@
 import { Component, OnInit, Output, EventEmitter} from '@angular/core';
+import {AuthService} from '../../../auth/service/auth.service';
 
 @Component({
   selector: 'app-side-nav-list',
@@ -7,7 +8,7 @@ import { Component, OnInit, Output, EventEmitter} from '@angular/core';
 })
 export class SideNavListComponent implements OnInit {
 
-  constructor() { }
+  constructor(public authService: AuthService) { }
   @Output() sideNavClose = new EventEmitter();
 
   ngOnInit(): void {
@@ -15,6 +16,11 @@ export class SideNavListComponent implements OnInit {
 
   onSideNavClose = () => {
     this.sideNavClose.emit();
+  }
+
+  logout = () => {
+    this.authService.logout();
+    this.onSideNavClose();
   }
 }
 

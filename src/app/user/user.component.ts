@@ -1,13 +1,13 @@
-import {AfterViewChecked, AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {UserService} from './services/user.service';
 import {ActivatedRoute} from '@angular/router';
-import {map, switchMap, tap} from 'rxjs/operators';
+import {catchError, map, switchMap, tap} from 'rxjs/operators';
 import {ParamService} from './services/param.service';
 import {ColumnMode} from '@swimlane/ngx-datatable';
 import {AuthService} from '../auth/service/auth.service';
 import {LoadingService} from '../shared/services/loading.service';
-import {combineLatest} from 'rxjs';
-import {FilterComponent} from './components/filter/filter.component';
+import {combineLatest, throwError} from 'rxjs';
+import {NotifierService} from '../shared/services/notifier.service';
 
 
 @Component({
@@ -15,17 +15,16 @@ import {FilterComponent} from './components/filter/filter.component';
   templateUrl: './user.component.html',
   styleUrls: ['./user.component.scss']
 })
-export class UserComponent implements OnInit, OnDestroy, AfterViewChecked {
+export class UserComponent implements OnInit, OnDestroy{
   ColumnMode = ColumnMode;
 
   constructor(private userService: UserService,
               private activatedRoute: ActivatedRoute,
               private paramService: ParamService,
               private loadingService: LoadingService,
+              private notifierService: NotifierService,
               private authService: AuthService) {
   }
-
-  @ViewChild(FilterComponent) filter: FilterComponent;
 
   stream$ = this.activatedRoute.paramMap.pipe(
     switchMap(param => {
@@ -39,7 +38,15 @@ export class UserComponent implements OnInit, OnDestroy, AfterViewChecked {
           res,
           loading,
           groups
-        }))
+        })),
+        catchError(error => {
+          if (error.error.status === 401) {
+            const btnUrls = ['/auth'];
+            const btnLabels = ['Login'];
+            this.notifierService.displayErrorDialog(error, btnUrls, btnLabels);
+          }
+          return throwError(error);
+        })
       );
     })
   );
@@ -52,6 +59,7 @@ export class UserComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.paramService.initializePagination(event.offset, event.pageSize);
   }
 
+  // TODO OFFER HIT FOR NAME IN FILTER BOX, ATLEAST 3 LETTERS
   // TODO sort for total score doesnt work but last week score works, sends out correct params but no idea why
   // TODO no response. starting happening when chaged databale exteral sorting to true. Baiscally one works then the otherr doesnt
   onSort(event: any): void {
@@ -61,15 +69,7 @@ export class UserComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   ngOnDestroy(): void {
-   // this.paramService.resetAll();
-  }
-
-  // ngAfterViewInit(): void {
-  //  // this.filter.onClear();
-  // }
-
-  ngAfterViewChecked(): void {
-    // this.filter.clearSelect();
+    this.paramService.resetParams();
   }
 
 }

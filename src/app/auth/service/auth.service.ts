@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import jwt_decode from 'jwt-decode';
 import {HttpClient} from '@angular/common/http';
 import {environment} from '../../../environments/environment';
-import {BehaviorSubject, combineLatest, Observable} from 'rxjs';
+import {BehaviorSubject, combineLatest, Observable, of} from 'rxjs';
 import {GroupDTO} from '../../dto/groupDTO';
 import {LoginView} from '../../views/loginView';
 import {LoginDTO} from '../../dto/loginDTO';
@@ -14,6 +14,29 @@ import {RegisterView} from '../../views/registerView';
 })
 export class AuthService {
   constructor(private http: HttpClient) { }
+
+  private baseUrl = environment.apiUrl;
+
+  // tslint:disable-next-line:variable-name
+  private _loading$ = new BehaviorSubject(false);
+  // tslint:disable-next-line:variable-name
+  private _userName$ = new BehaviorSubject<string>(localStorage.getItem('username'));
+  // tslint:disable-next-line:variable-name
+  private _role$ = new BehaviorSubject<string>(localStorage.getItem('role'));
+
+  private initialToken = localStorage.getItem('token') ? localStorage.getItem('token') : 'blabla';
+  // tslint:disable-next-line:variable-name
+  private _token$ = new BehaviorSubject<string>(localStorage.getItem('token'));
+
+  // tslint:disable-next-line:variable-name
+  private _nrlGroups$ = new BehaviorSubject<GroupDTO[]>(
+    JSON.parse(localStorage.getItem('nrlGroups'))
+  );
+
+  // tslint:disable-next-line:variable-name
+  private _aflGroups$ = new BehaviorSubject<GroupDTO[]>(
+    JSON.parse(localStorage.getItem('aflGroups'))
+  );
 
  get token$(): Observable<string> {
     return this._token$.asObservable();
@@ -39,49 +62,42 @@ export class AuthService {
     return this._nrlGroups$.asObservable();
   }
 
+  menuObs = combineLatest([this.isLoggedIn$, this.role$,
+    this.aflGroups$, this.nrlGroups$, this.userName$]).pipe(
+      map(([loggedIn, role, aflGroups,
+             nrlGroups, userName]) => ({
+        loggedIn,
+        role,
+        aflGroups,
+        nrlGroups,
+        userName
+      }))
+  );
+
   get isLoggedIn$(): Observable<boolean> {
-    return this.token$.pipe(
-      map(token => {
-        if (token) {
-          const decoded = jwt_decode(token);
-          // @ts-ignore
-          const exp = decoded.exp;
-          if (exp === undefined) {
+      return this.token$.pipe(
+        map(token => {
+          if (token) {
+            const decoded = jwt_decode(token);
+            // @ts-ignore(authService.isLoggedIn$ | async)
+            const exp = decoded.exp;
+            if (exp === undefined) {
+              return false;
+            }
+
+            const date = new Date(0);
+            const tokenExpDate = date.setUTCSeconds(exp);
+
+            return tokenExpDate.valueOf() > new Date().valueOf();
+
+          } else {
             return false;
           }
+        })
+      );
 
-          const date = new Date(0);
-          const tokenExpDate = date.setUTCSeconds(exp);
-
-          return tokenExpDate.valueOf() > new Date().valueOf();
-
-        } else {
-          return false;
-        }
-      })
-    );
   }
-  private baseUrl = environment.apiUrl;
 
-  // tslint:disable-next-line:variable-name
-  private _loading$ = new BehaviorSubject(false);
-  // tslint:disable-next-line:variable-name
-  private _userName$ = new BehaviorSubject<string>(localStorage.getItem('username'));
-  // tslint:disable-next-line:variable-name
-  private _role$ = new BehaviorSubject<string>(localStorage.getItem('role'));
-
-  // tslint:disable-next-line:variable-name
-  private _token$ = new BehaviorSubject<string>(localStorage.getItem('token'));
-
-  // tslint:disable-next-line:variable-name
-  private _nrlGroups$ = new BehaviorSubject<GroupDTO[]>(
-    JSON.parse(localStorage.getItem('nrlGroups'))
-  );
-
-  // tslint:disable-next-line:variable-name
-  private _aflGroups$ = new BehaviorSubject<GroupDTO[]>(
-    JSON.parse(localStorage.getItem('aflGroups'))
-  );
 
   checkCompAndStatus$ = combineLatest([this.isLoggedIn$, this.isInNrl$(), this.isInAfl$()]).pipe(
     map(([isLoggedIn, isInNrl, isInAfl]) => ({

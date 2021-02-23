@@ -1,3 +1,4 @@
+<ng-container *ngIf="data.status === 400; else success">
 <h1 mat-dialog-title>Error:  {{data.status}}</h1>
 <div mat-dialog-content>
   {{data.responseHeader}}!!!  {{data.message}}
@@ -7,3 +8,12 @@
     <button  mat-flat-button mat-dialog-close (click)="reroute(data.btnUrls[i])">{{lab}}</button>
   </ng-container>
 </div>
+</ng-container>
+<ng-template #success>
+  <h1 mat-dialog-title>{{data.message}}</h1>
+  <div mat-dialog-content>
+    <ng-container *ngFor="let lab of data.btnLabels;let i = index">
+      <button  mat-flat-button mat-dialog-close (click)="reroute(data.btnUrls[i])">{{lab}}</button>
+    </ng-container>
+  </div>
+</ng-template>

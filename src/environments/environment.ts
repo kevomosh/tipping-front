@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  apiUrl: 'https://tip-back.kakuom.com/api'
+  apiUrl: 'https://tipping-back.kakuom.com/api'
   // apiUrl: 'http://localhost:8080/api'
 
 };

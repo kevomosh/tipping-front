@@ -19,6 +19,7 @@
             <ng-select
               [items]="playerList"
               bindLabel="both"
+              placeholder="Pick first scorer"
               formControlName="firstScorer"
             >
             </ng-select>
@@ -29,6 +30,8 @@
         </div>
       </ng-container>
       <ng-container *ngIf="info.games[i].gameNumber === 2">
+        <mat-hint align="start"><strong>Margin for game 2</strong> </mat-hint>
+
         <div fxLayout="row" fxLayoutAlign="space-between center" class="slider" fxLayoutGap="40px">
           <mat-slider
             fxFlex="70"
@@ -46,7 +49,14 @@
     </div>
   </div>
   <div fxLayout="row" fxLayoutAlign="center center" fxFill class="sub-btn">
-  <button mat-raised-button [disabled]="!isAdmin && pickForm.invalid">Submit</button>
+    <ng-container *ngIf="isAdmin">
+      <button mat-raised-button [class.spinner]="dataTransfer$ | async"
+              [disabled]="dataTransfer$ | async">Admin Submit</button>
+    </ng-container>
+    <ng-container *ngIf="!isAdmin">
+      <button mat-raised-button [class.spinner]="dataTransfer$ | async"
+              [disabled]="pickForm.invalid || (dataTransfer$ | async)">Submit</button>
+    </ng-container>
   </div>
 </form>
 </mat-card>

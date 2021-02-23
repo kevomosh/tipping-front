@@ -12,6 +12,10 @@ export class ParamService {
 
 private mainParams$ = new BehaviorSubject<ParamsDTO>({});
 
+  resetParams(): void {
+    this.mainParams$.next({});
+  }
+
   initializePagination(pageNumber: number, size: number): void {
     const val = { ...this.mainParams$.getValue()};
     if (Object.keys(val).length > 0) {

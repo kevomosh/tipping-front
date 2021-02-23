@@ -1,6 +1,6 @@
 
 <div fxLayout="column" fxLayoutGap="10px" *ngIf="combined$ | async as res; else loadingOrError">
-  <h1 class="title">Picks for round {{res.result.weekNumber}}</h1>
+  <h1 class="title">{{compStr | titlecase}} Picks for Round {{res.result.weekNumber}}</h1>
   <app-timer
       [deadline]="res.result.deadLine"
     ></app-timer>
@@ -43,7 +43,7 @@
   >
     <ngx-datatable-column [sortable]="false" name="Name" [frozenLeft]="true" [maxWidth]="80"></ngx-datatable-column>
     <ng-container *ngFor="let a of gameColumnNames; let i = index">
-      <ngx-datatable-column prop="a" [maxWidth]="120">
+      <ngx-datatable-column prop="a" [maxWidth]="gameRowWidth">
         <ng-template ngx-datatable-header-template>
           <div
             [ngClass]="{'color-change-title': isSelectionWinner(i, res.result.gamesForWeek[i]?.homeTeam)}"
@@ -60,10 +60,45 @@
         </ng-template>
       </ngx-datatable-column>
     </ng-container>
-    <ngx-datatable-column [sortable]="false" name="FirstScorer" ></ngx-datatable-column>
-    <ngx-datatable-column [sortable]="false" name="Margin" [width]="60"></ngx-datatable-column>
-    <ngx-datatable-column [sortable]="false" name="ExtraPoint" [width]="60"></ngx-datatable-column>
-    <ngx-datatable-column [sortable]="false" name="Score" [width]="60"></ngx-datatable-column>
+    <ngx-datatable-column [sortable]="false" prop="firstScorer" [width]="150">
+      <ng-template ngx-datatable-header-template>
+        <div>FirstScorer</div>
+        <ng-container *ngIf="resultHasGameNumber(1,res.result)">
+          <div class="color-change-title">
+            {{res.result.firstScorer}}
+          </div>
+        </ng-container>
+      </ng-template>
+      <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+        <div
+          [ngClass]="{'color-change-title': firstScorerRight(1, res.result, value)}"
+        >{{value}}</div>
+      </ng-template>
+    </ngx-datatable-column>
+    <ngx-datatable-column [sortable]="false" prop="margin" [width]="90">
+      <ng-template ngx-datatable-header-template>
+        <div>Margin</div>
+        <ng-container *ngIf="resultHasGameNumber(2, res.result)">
+          <div class="color-change-title">
+            {{res.result.margin}}
+          </div>
+        </ng-container>
+      </ng-template>
+      <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+        <div
+          [ngClass]="{'color-change-title': marginRight(2, res.result, value)}"
+        >{{value}}</div>
+      </ng-template>
+    </ngx-datatable-column>
+    <ngx-datatable-column prop="extraPoint" [width]="90" [sortable]="false">
+      <ng-template ngx-datatable-header-template>
+       Bonus
+      </ng-template>
+      <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+        {{value}}
+      </ng-template>
+    </ngx-datatable-column>
+    <ngx-datatable-column [sortable]="false" name="Score" [width]="90"></ngx-datatable-column>
   </ngx-datatable>
   </div>
 </div>

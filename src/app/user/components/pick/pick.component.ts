@@ -11,6 +11,7 @@ import {LoadingService} from '../../../shared/services/loading.service';
 import {NotifierService} from '../../../shared/services/notifier.service';
 import {HttpErrorResponse} from '@angular/common/http';
 import {Alert} from '../../../dto/Alert';
+import {PickResultDTO} from '../../../dto/PickResultDTO';
 
 
 @Component({
@@ -31,19 +32,22 @@ export class PickComponent implements OnInit {
   ColumnMode = ColumnMode;
   winners: TeamSelectedDTO[] = [];
   rows = [];
-  gameColumnNames: string[] ;
+  gameRowWidth: number;
+  gameColumnNames: string[];
   loading = true;
   compStr: string;
   httpError$ = new BehaviorSubject(false);
+  weekNumber$ = new BehaviorSubject(1);
 
   combined$ = this.activatedRoute.paramMap.pipe(
     switchMap(param => {
       const comp = param.get('comp');
       // tslint:disable-next-line:radix
       const weekNumber = parseInt(param.get('weekNumber')) ;
+      this.weekNumber$.next(weekNumber);
       const groups$ =  comp === 'nrl' ? this.authService.nrlGroups$ : this.authService.aflGroups$;
       this.compStr = comp === 'nrl' ? 'nrl' : 'afl';
-
+      this.gameRowWidth = comp === 'nrl' ? 90 : 140;
       return  combineLatest([this.userService.getPicks(comp, weekNumber),
         this.loadingService.tableIsLoading, groups$]).pipe(
         map(([result, isLoading,
@@ -80,11 +84,28 @@ export class PickComponent implements OnInit {
     })
   );
 
+  resultHasGameNumber(gameNumber: number, result: PickResultDTO): boolean {
+   return  result.winners.some(x => x.gameNumber === gameNumber);
+  }
+
+  firstScorerRight(gameNumber: number, result: PickResultDTO, name: string): boolean {
+    return  this.resultHasGameNumber(gameNumber, result) && result.firstScorer === name;
+  }
+
+  marginRight(gameNumber: number, result: PickResultDTO, margin: number): boolean {
+    return this.resultHasGameNumber(gameNumber, result) && result.margin === margin;
+  }
+
   handleError(error: HttpErrorResponse): void {
     this.httpError$.next(true);
     const e = error.error;
-    const btnLabels = ['Make pick', 'Go to latest week'];
-    const btnUrls = [`/user/make-pick/${this.compStr}`, `/user/pick/${this.compStr}`, ];
+    const btnLabels = [ 'View latest Round'];
+    const btnUrls = [`/user/pick/${this.compStr}`, ];
+    if (e.message.startsWith('Need')) {
+      btnLabels.push('Tip now For the Round');
+      btnUrls.push(`/user/make-pick/${this.compStr}/${this.weekNumber$.getValue()}`);
+    }
+
     const alert: Alert = {
       status: e.status,
       responseHeader: e.error,
@@ -120,7 +141,6 @@ export class PickComponent implements OnInit {
   previousNotZero(weeknumber: number): boolean {
     return weeknumber === 1;
   }
-
 
   isSelectionWinner(index: number, pick: string): boolean {
     const length = this.winners.length;

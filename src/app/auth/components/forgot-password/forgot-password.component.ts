@@ -5,8 +5,6 @@ import {AuthService} from '../../service/auth.service';
 import {combineLatest, Subject} from 'rxjs';
 import {map, takeUntil, tap} from 'rxjs/operators';
 import {NotifierService} from '../../../shared/services/notifier.service';
-import {HttpErrorResponse} from '@angular/common/http';
-import {Alert} from '../../../dto/Alert';
 import {MatSnackBar} from '@angular/material/snack-bar';
 
 @Component({
@@ -41,7 +39,6 @@ export class ForgotPasswordComponent implements OnInit, OnDestroy {
   });
 
   ngOnInit(): void {
-
   }
 
   onSubmit(): void {
@@ -56,25 +53,14 @@ export class ForgotPasswordComponent implements OnInit, OnDestroy {
         verticalPosition: 'bottom',
       });
     }, error => {
-      this.handleError(error);
+      this.authService.setLoading(false);
+      const btnUrls = ['/auth/forgot-password', '/auth/register'];
+      const btnLabels = ['Try again', 'Register'];
+      this.notifierService.displayErrorDialog(error, btnUrls, btnLabels);
+      this.cpForm.reset();
     });
   }
 
-  handleError(error: HttpErrorResponse): void {
-    this.authService.setLoading(false);
-    const e = error.error;
-    const btnUrls = ['/auth/forgot-password', '/auth/register'];
-    const btnLabels = ['Try again', 'Register'];
-    const alert: Alert = {
-      status: e.status,
-      responseHeader: e.error,
-      message: e.message,
-      btnLabels,
-      btnUrls,
-    };
-    this.notifierService.showErrorDialog(alert);
-    this.cpForm.reset();
-  }
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();

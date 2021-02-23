@@ -1,4 +1,4 @@
-import {Component, Input, OnInit, Output, EventEmitter} from '@angular/core';
+import {Component, Input, OnInit, Output, EventEmitter, OnDestroy, OnChanges, SimpleChanges} from '@angular/core';
 import {GamesForWeekDTO} from '../../../dto/gamesForWeekDTO';
 import {Form, FormArray, FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {GameDTO} from '../../../dto/gameDTO';
@@ -6,15 +6,22 @@ import {PlayerDTO} from '../../../dto/playerDTO';
 import {MakePickView} from '../../../views/makePickView';
 import {PickView} from '../../../views/pickView';
 import {MatSnackBar} from '@angular/material/snack-bar';
+import {UserService} from '../../../user/services/user.service';
+import {AdminService} from '../../../admin/services/admin.service';
+import {Subject} from 'rxjs';
+import {takeUntil} from 'rxjs/operators';
 
 @Component({
   selector: 'app-pick-form',
   templateUrl: './pick-form.component.html',
   styleUrls: ['./pick-form.component.scss']
 })
-export class PickFormComponent implements OnInit {
+export class PickFormComponent implements  OnDestroy, OnChanges {
 
-  constructor(private fb: FormBuilder,  private snackBar: MatSnackBar) { }
+  constructor(private fb: FormBuilder,
+              private snackBar: MatSnackBar,
+              public uzerService: UserService,
+              public adminService: AdminService) { }
   @Input() info: GamesForWeekDTO;
   @Input() limit: number;
   @Input() isAdmin: boolean;
@@ -25,17 +32,22 @@ export class PickFormComponent implements OnInit {
   });
 
   playerList: {both: string; name: string}[] = [];
+  private destroy$ = new Subject<void>();
+  // @ts-ignore
+  dataTransfer$ = this.isAdmin ? this.adminService.dataTransfer$ : this.uzerService.dataTransfer$;
 
-  ngOnInit(): void {
-    this.initialFormUpdate();
-    this.updateFormIfPickPresent();
+
+  ngOnChanges(changes: SimpleChanges): void {
+    const latestInfoValue = changes.info.currentValue;
+    this.populateForm(latestInfoValue.games, latestInfoValue.players);
+    this.updateFormIfPickPresent(latestInfoValue);
   }
 
-  initialFormUpdate(): void {
-    if (this.info.games.length > 0) {
-      this.updateForm(this.info.games);
-      if (this.info.games.some(g => g.gameNumber === 2)) {
-        this.playerList = this.info.players.map(p => ({
+  populateForm(games: GameDTO[], players: PlayerDTO[]): void {
+    if (games.length > 0) {
+      this.updateForm(games);
+      if (games.some(g => g.gameNumber === 2)) {
+        this.playerList = players.map(p => ({
           both: p.name + '  (' + p.team + ')',
           name: p.name
         }));
@@ -43,28 +55,29 @@ export class PickFormComponent implements OnInit {
     }
   }
 
-  updateFormIfPickPresent(): void {
-    if ( !this.isAdmin && Object.keys(this.info.pickOfWeek).length > 0) {
+  updateFormIfPickPresent(info: GamesForWeekDTO): void {
+    if (!this.isAdmin && info.pickOfWeek !== null) {
       this.snackBar.open('Have already been filled out', '', {
-        duration: 5000,
+        duration: 3000,
         horizontalPosition: 'center',
         verticalPosition: 'bottom',
       });
-      const pick = this.info.pickOfWeek.teamsSelected;
+      const pick = info.pickOfWeek.teamsSelected;
       const controls = this.teamsSelectedArray().controls;
 
       for (let i = 0; i < controls.length ; i++) {
         controls[i].patchValue({team: pick[i].team});
         if (controls[i].value.gameNumber === 1) {
-          const playeer = this.playerList.find(x => x.name === this.info.pickOfWeek.firstScorer);
-          controls[i].patchValue({firstScorer: playeer});
+          const player = this.playerList.find(x => x.name === info.pickOfWeek.firstScorer);
+          controls[i].patchValue({firstScorer: player});
         }
         if (controls[i].value.gameNumber === 2) {
-          controls[i].patchValue({margin: this.info.pickOfWeek.margin});
+          controls[i].patchValue({margin: info.pickOfWeek.margin});
         }
       }
     }
   }
+
 
   onSubmit(): void{
     const val = this.pickForm.value.teamsSelected;
@@ -119,6 +132,11 @@ export class PickFormComponent implements OnInit {
 
    teamsSelectedArray(): FormArray {
     return this.pickForm.get('teamsSelected') as FormArray;
+  }
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+    this.snackBar.dismiss();
   }
 
 }

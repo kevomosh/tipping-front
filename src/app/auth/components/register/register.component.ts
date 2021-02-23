@@ -95,31 +95,20 @@ export class RegisterComponent implements OnInit, OnDestroy {
         this.authService.setLoading(false);
         this.router.navigateByUrl('/auth');
       }, 3000);
-      this.snackBar.open('Successfully registered, now being diverted to log in', '', {
+      this.snackBar.open('Successfully registered, now being diverted to log in',
+        '', {
         duration: 3000,
         horizontalPosition: 'center',
         verticalPosition: 'bottom',
       });
     }, error => {
-      this.handleError(error);
+      this.authService.setLoading(false);
+      this.children.forEach(child => child.handleClearClick());
+      const btnUrls = ['/auth/register'];
+      const btnLabels = ['Try again'];
+      this.notifierService.displayErrorDialog(error, btnUrls, btnLabels);
+      this.registerForm.reset();
     });
-  }
-
-  handleError(error: HttpErrorResponse): void {
-    this.authService.setLoading(false);
-    this.children.forEach(child => child.handleClearClick());
-    const e = error.error;
-    const btnUrls = ['/auth/register'];
-    const btnLabels = ['Try again'];
-    const alert: Alert = {
-      status: e.status,
-      responseHeader: e.error,
-      message: e.message,
-      btnLabels,
-      btnUrls,
-    };
-    this.notifierService.showErrorDialog(alert);
-    this.registerForm.reset();
   }
 
   ngOnDestroy(): void {

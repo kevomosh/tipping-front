@@ -8,9 +8,9 @@
       </mat-expansion-panel-header>
       <mat-form-field fxLayout="row">
         <mat-label>Name</mat-label>
-        <label>
           <input matInput placeholder="name" type="text" [formControl]="nameFormControl">
-        </label>
+        <mat-hint align="start"><strong>Enter at least 3 characters</strong> </mat-hint>
+
       </mat-form-field>
 
       <ng-container *ngIf="nameFilter$ | async"></ng-container>

@@ -1,4 +1,4 @@
-<mat-toolbar color="primary">
+<mat-toolbar color="primary" *ngIf="authService.menuObs | async as comb">
   <div fxHide.gt-xs>
     <button mat-icon-button (click)="onToggleSidenav()">
       <mat-icon>menu</mat-icon>
@@ -6,30 +6,45 @@
   </div>
     <div fxFlex fxLayout fxLayoutAlign="end" fxHide.xs>
       <ul fxLayout fxLayoutGap="15px" class="navigation-items">
-        <ng-container *ngIf="authService.isLoggedIn$  | async as res; else notLoggedIn">
-          <li>
-            <a routerLink="/admin/add-result/nrl">Post Result</a>
-          </li>
-          <ng-container *ngIf="(authService.aflGroups$ | async)?.length > 0">
+        <ng-container *ngIf="comb.loggedIn; else notLoggedIn">
+          <ng-container *ngIf="comb.role === 'ROLE_ADMIN'">
+            <li>
+              <button mat-button [mat-menu-trigger-for]="both">Admin</button>
+            </li>
+            <mat-menu #both="matMenu">
+              <button  mat-menu-item [mat-menu-trigger-for]="nrl">Nrl</button>
+              <button mat-menu-item [mat-menu-trigger-for]="afl">Afl</button>
+            </mat-menu>
+            <mat-menu #nrl="matMenu">
+              <button mat-menu-item routerLink="/admin/add-result/nrl">Post Results</button>
+              <button mat-menu-item routerLink="/admin/create-week/nrl">Create Week</button>
+            </mat-menu>
+            <mat-menu #afl="matMenu">
+              <button mat-menu-item routerLink="/admin/add-result/afl">Post Results</button>
+              <button mat-menu-item routerLink="/admin/create-week/afl">Create Week</button>
+            </mat-menu>
+          </ng-container>
+
+          <ng-container *ngIf="comb.aflGroups?.length > 0">
             <li [mat-menu-trigger-for]="aflMenu">
               <mat-icon>unfold_more</mat-icon>
               <a matLine>Afl</a>
             </li>
             <mat-menu #aflMenu="matMenu" class="menu">
-              <button type="button" mat-menu-item routerLink="/user/results/afl">Results</button>
-              <button type="button" mat-menu-item routerLink="/user/make-pick/afl">Make</button>
-              <button type="button" mat-menu-item routerLink="/user/pick/afl">Picks</button>
+              <button type="button" mat-menu-item routerLink="/user/results/afl"><mat-icon>sports_rugby</mat-icon>Results</button>
+              <button type="button" mat-menu-item routerLink="/user/make-pick/afl"><mat-icon>add</mat-icon>Tip now</button>
+              <button type="button" mat-menu-item routerLink="/user/pick/afl"><mat-icon>receipt</mat-icon>Weekly Picks</button>
             </mat-menu>
           </ng-container>
-          <ng-container *ngIf="(authService.nrlGroups$ | async)?.length > 0">
+          <ng-container *ngIf="comb.nrlGroups?.length > 0">
             <li [mat-menu-trigger-for]="nrlMenu">
               <mat-icon>unfold_more</mat-icon>
               <a matLine>Nrl</a>
             </li>
             <mat-menu #nrlMenu="matMenu" class="menu">
-              <button type="button" mat-menu-item routerLink="/user/results/nrl">Results</button>
-              <button type="button" mat-menu-item routerLink="/user/make-pick/nrl">Make</button>
-              <button type="button" mat-menu-item routerLink="/user/pick/nrl">Picks</button>
+              <button type="button" mat-menu-item routerLink="/user/results/nrl"><mat-icon>sports_rugby</mat-icon>Results</button>
+              <button type="button" mat-menu-item routerLink="/user/make-pick/nrl"><mat-icon>add</mat-icon>Tip now</button>
+              <button type="button" mat-menu-item routerLink="/user/pick/nrl"><mat-icon>receipt</mat-icon>Weekly Picks</button>
             </mat-menu>
           </ng-container>
           <li>

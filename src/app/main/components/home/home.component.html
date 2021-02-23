@@ -1,1 +1,25 @@
-<p>home works!</p>
+<ng-container *ngIf="comb$ | async as comb">
+  <div *ngIf="comb.loggedIn; else notLoggedIn">
+    <h3>Click to go to Competition</h3>
+    <div fxLayout="row" fxLayoutAlign="space-evenly center">
+      <a mat-fab routerLink="/user/results/nrl" type="button"> Nrl </a>
+      <a mat-fab routerLink="/user/results/afl" type="button"> Afl </a>
+    </div>
+  </div>
+  <ng-template #notLoggedIn>
+    <div class="text-light">
+      <div id="home">
+        <h1>Tipping</h1>
+        <h3>Join an existing group</h3>
+        <div class="custom-buttons">
+          <a mat-button class="btn" type="button" routerLink="/auth">Log in</a>
+          <a mat-button class="btn" type="button" routerLink="/auth/register">Register</a>
+          <br />
+          <div class="mt-2">
+            <small>For any enquiries contact admin@kakuom.com </small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+</ng-container>

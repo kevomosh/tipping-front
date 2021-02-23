@@ -1,17 +1,33 @@
 <div  fxLayoutAlign="center center" class="make-pic">
 <div  fxFlex="60" fxFlex.lt-md="100" fxLayout="column" fxLayoutGap="2px">
-  <div *ngIf="info$ | async as res; else loadingOrError">
-    <h1 class="title">Round {{res.weekNumber}}</h1>
+  <div *ngIf="info$ | async as res; else loading">
+    <h1 class="title">{{compStr | titlecase}} Round {{res.weekNumber}}</h1>
     <app-timer
       [deadline]="res.deadLine"
     ></app-timer>
+    <div fxLayout="row" fxLayoutAlign="center center" class="week">
+      <button
+        (click)="navigateToWeek(res.weekNumber - 1)"
+        mat-raised-button type="button"
+        *ngIf="!previousNotZero(res.weekNumber)"
+        class="first">Previous Round</button>
+      <button
+        (click)="navigateToWeek(res.weekNumber + 1)"
+        mat-raised-button type="button"
+        *ngIf="res.fwp" class="second">Next Round</button>
+    </div>
     <app-pick-form [info]="res"
     [limit]="limit"
     [isAdmin]="false"
     (submitForm)="onSubmitForm($event)"></app-pick-form>
   </div>
-  <ng-template #loadingOrError>
-
+  <ng-template #loading>
+      <div *ngIf="dataTransfer$ | async" fxLayout="row" fxLayoutAlign="center center" style="height: 100%; margin-top: 20px">
+        <mat-progress-spinner
+          [color]="'accent'"
+          [mode]="'indeterminate'"
+        ></mat-progress-spinner>
+      </div>
   </ng-template>
   <div>
   </div>

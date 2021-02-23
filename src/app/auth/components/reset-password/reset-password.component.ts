@@ -7,8 +7,7 @@ import {combineLatest, Subject} from 'rxjs';
 import {AuthService} from '../../service/auth.service';
 import {map, takeUntil} from 'rxjs/operators';
 import {MustMatch} from '../register/mustMatch';
-import {HttpErrorResponse} from '@angular/common/http';
-import {Alert} from '../../../dto/Alert';
+
 
 @Component({
   selector: 'app-reset-password',
@@ -70,25 +69,13 @@ export class ResetPasswordComponent implements OnInit, OnDestroy {
       });
 
     }, error => {
-      this.handleError(error);
+      this.authService.setLoading(false);
+      const btnUrls = ['/auth/forgot-password', '/auth/register'];
+      const btnLabels = ['Forgot Password', 'Register'];
+      this.notifierService.displayErrorDialog(error, btnUrls, btnLabels);
+      this.rForm.reset();
     });
 
-  }
-
-  handleError(error: HttpErrorResponse): void {
-    this.authService.setLoading(false);
-    const e = error.error;
-    const btnUrls = ['/auth/forgot-password', '/auth/register'];
-    const btnLabels = ['Forgot Password', 'Register'];
-    const alert: Alert = {
-      status: e.status,
-      responseHeader: e.error,
-      message: e.message,
-      btnLabels,
-      btnUrls,
-    };
-    this.notifierService.showErrorDialog(alert);
-    this.rForm.reset();
   }
 
   ngOnDestroy(): void {

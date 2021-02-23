@@ -1,5 +1,5 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://tip-back.kakuom.com/api'
+  apiUrl: 'https://tipping-back.kakuom.com/api'
 
 };

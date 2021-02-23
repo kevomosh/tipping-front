@@ -8,6 +8,8 @@
     (submitForm)="onSubmitForm($event, comb.competition)"
     ></app-pick-form>
       <button
+        [class.spinner]="adminService.dataTransfer$ | async"
+        [disabled]="adminService.dataTransfer$ | async"
         mat-raised-button
         color="warn"
         type="button"

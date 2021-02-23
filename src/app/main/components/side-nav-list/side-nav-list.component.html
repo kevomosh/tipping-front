@@ -1,11 +1,57 @@
-<mat-nav-list>
-  <a mat-list-item routerLink="/user/results/nrl" (click)="onSideNavClose()">
-    <mat-icon>home</mat-icon><span class="nav-caption">Home</span>
-  </a>
-  <a mat-list-item routerLink="/user/make-pick/nrl" (click)="onSideNavClose()">
-    <mat-icon>home</mat-icon><span class="nav-caption">Make pic</span>
-  </a>
-  <a mat-list-item routerLink="/user/pick/nrl" (click)="onSideNavClose()">
-    <mat-icon>home</mat-icon><span class="nav-caption">Pics</span>
-  </a>
+<mat-nav-list *ngIf="authService.menuObs | async as comb" >
+  <ng-container *ngIf="comb.loggedIn">
+  <ng-container *ngIf="comb.nrlGroups.length > 0">
+    <mat-list-item [mat-menu-trigger-for]="nrl">
+      <mat-icon>unfold_more</mat-icon>
+      <a matLine>Nrl</a>
+    </mat-list-item>
+    <mat-menu #nrl>
+      <button mat-menu-item routerLink="/user/results/nrl" (click)="onSideNavClose()">
+        <mat-icon>sports_rugby</mat-icon><span class="nav-caption">Results</span>
+      </button>
+      <button mat-menu-item routerLink="/user/make-pick/nrl" (click)="onSideNavClose()">
+        <mat-icon>add</mat-icon><span class="nav-caption">Tip now</span>
+      </button>
+      <button mat-menu-item routerLink="/user/pick/nrl" (click)="onSideNavClose()">
+        <mat-icon>receipt</mat-icon><span class="nav-caption">Weekly Picks</span>
+      </button>
+    </mat-menu>
+  </ng-container>
+    <ng-container *ngIf="comb.aflGroups.length > 0">
+      <mat-list-item [mat-menu-trigger-for]="afl">
+        <mat-icon>unfold_more</mat-icon>
+        <a matLine>Afl</a>
+      </mat-list-item>
+      <mat-menu #afl>
+        <button mat-menu-item routerLink="/user/results/afl" (click)="onSideNavClose()">
+          <mat-icon>sports_rugby</mat-icon><span class="nav-caption">Results</span>
+        </button>
+        <button mat-menu-item routerLink="/user/make-pick/afl" (click)="onSideNavClose()">
+          <mat-icon>add</mat-icon><span class="nav-caption">Tip now</span>
+        </button>
+        <button mat-menu-item routerLink="/user/pick/afl" (click)="onSideNavClose()">
+          <mat-icon>receipt</mat-icon><span class="nav-caption">Weekly Picks</span>
+        </button>
+      </mat-menu>
+    </ng-container>
+    <ng-container *ngIf="comb.role === 'ROLE_ADMIN'">
+      <a mat-list-item routerLink="/admin/add-result/nrl" (click)="onSideNavClose()">
+        <mat-icon>lightbulb</mat-icon><span class="nav-caption">Nrl Result</span>
+      </a>
+      <a mat-list-item routerLink="/admin/add-result/afl" (click)="onSideNavClose()">
+        <mat-icon>lightbulb</mat-icon><span class="nav-caption">Afl Result</span>
+      </a>
+    </ng-container>
+    <a mat-list-item routerLink="/home" (click)="logout()">
+      <mat-icon>logout</mat-icon><span class="nav-caption">Logout</span>
+    </a>
+  </ng-container>
+  <ng-container *ngIf="!comb.loggedIn">
+    <a mat-list-item routerLink="/auth" (click)="onSideNavClose()">
+      <mat-icon>login</mat-icon><span class="nav-caption">Login</span>
+    </a>
+    <a mat-list-item routerLink="/auth/register" (click)="onSideNavClose()">
+      <mat-icon>app_registration</mat-icon><span class="nav-caption">Register</span>
+    </a>
+  </ng-container>
 </mat-nav-list>

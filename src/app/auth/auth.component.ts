@@ -6,8 +6,6 @@ import {combineLatest, Subject} from 'rxjs';
 import {LoginView} from '../views/loginView';
 import {map, takeUntil, tap} from 'rxjs/operators';
 import {NotifierService} from '../shared/services/notifier.service';
-import {HttpErrorResponse} from '@angular/common/http';
-import {Alert} from '../dto/Alert';
 
 @Component({
   selector: 'app-auth',
@@ -43,7 +41,7 @@ export class AuthComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     // TODO Change end of return url to correct one
-    this.returnUrl = this.activatedRoute.snapshot.queryParams.returnUrl || '/user/results/nrl';
+    this.returnUrl = this.activatedRoute.snapshot.queryParams.returnUrl || '/home';
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: [
@@ -67,24 +65,13 @@ export class AuthComponent implements OnInit, OnDestroy {
       this.router.navigateByUrl(this.returnUrl);
     }, error => {
       this.authService.setLoading(false);
-      this.handleError(error);
+      const btnUrls = ['/auth', '/auth/forgot-password'];
+      const btnLabels = ['Try again', 'Change Password'];
+      this.notifierService.displayErrorDialog(error, btnUrls, btnLabels);
+      this.loginForm.reset();
     });
   }
 
-  handleError(error: HttpErrorResponse): void {
-    const e = error.error;
-    const btnUrls = ['/auth', '/auth/change-password'];
-    const btnLabels = ['Try again', 'Change Password'];
-    const alert: Alert = {
-      status: e.status,
-      responseHeader: e.error,
-      message: e.message,
-      btnLabels,
-      btnUrls,
-    };
-    this.notifierService.showErrorDialog(alert);
-    this.loginForm.reset();
-  }
 
   ngOnDestroy(): void {
     this.destroy$.next();
